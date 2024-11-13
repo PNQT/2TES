@@ -23,6 +23,7 @@ class LoginController extends Controller
      {
  
          $validatedData = $request->validated();
+         logger()->info('Dữ liệu đã xác thực:', $validatedData);
 
          if (Auth::attempt($validatedData)) {
              return response()->json([

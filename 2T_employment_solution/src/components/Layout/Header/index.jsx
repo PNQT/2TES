@@ -123,10 +123,10 @@ function Header() {
                     </Tippy>
                 ) : (
                     <>
-                        <Button className={cx("groupButtonSignUp")}>
+                        <Button to="/register" className={cx("groupButtonSignUp")}>
                             Sign Up
                         </Button>
-                        <Button className={cx("groupButtonLogin")} outline>
+                        <Button to="/login" className={cx("groupButtonLogin")} outline>
                             Login
                         </Button>
                     </>
