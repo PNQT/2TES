@@ -7,6 +7,10 @@ const routes = {
     apply : '/apply',
     profile: '/profile',
     setting: '/setting',
+    register : '/register',
+    login: '/login',
+    resetpassword: '/resetpassword',
+    sendemail: '/sendemail',
 }
 export default routes;
 

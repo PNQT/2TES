@@ -5,7 +5,7 @@
 "2t-employment-solution@file:.":
   version "0.0.0"
   dependencies:
-    "2t-employment-solution" "file:C:/Users/ASUS/AppData/Local/Yarn/Cache/v6/npm-2t-employment-solution-0.0.0-a2566bed-0301-464a-920b-5a1dde93a602-1731338826109/node_modules/2t-employment-solution"
+    "2t-employment-solution" "file:C:/Users/KIM THOA/AppData/Local/Yarn/Cache/v6/npm-2t-employment-solution-0.0.0-b80172b6-33f9-4213-8e7f-70d729bd3add-1731488008526/node_modules/2t-employment-solution"
     "@testing-library/jest-dom" "^5.14.1"
     "@testing-library/react" "^13.0.0"
     "@testing-library/user-event" "^13.2.1"
@@ -16,6 +16,7 @@
     normalize.css "3.0.3"
     react "^18.3.1"
     react-dom "^18.3.1"
+    react-icons "^5.3.0"
     react-modal "^3.16.1"
     react-router-dom "^6.27.0"
     react-scripts "5.0.1"

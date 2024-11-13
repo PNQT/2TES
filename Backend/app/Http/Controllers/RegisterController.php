@@ -11,7 +11,7 @@ class RegisterController extends Controller
     public function index()
     {
         {
-           $user = user::all();
+           $user = User::all();
             return response()->json([
                 'user' => $user
             ], 200);
@@ -24,12 +24,6 @@ class RegisterController extends Controller
             // Validate data
             $validatedData = $request->validated();
     
-            // Optionally handle file uploads if you plan to support it
-            // if ($request->hasFile('avatar')) {
-            //     $imageName = time() . '.' . $request->avatar->extension();
-            //     $request->avatar->move(public_path('uploads'), $imageName);
-            //     $validatedData['avatar'] = 'uploads/' . $imageName;
-            // }
     
             // Create a new user
             $user = User::create($validatedData);

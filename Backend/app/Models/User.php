@@ -29,7 +29,7 @@ class User extends Authenticatable
     ];
 
     protected $hidden = [
-        'password',
+        // 'password',
     ];
 
     public $timestamps = true;
@@ -53,11 +53,11 @@ class User extends Authenticatable
             }
         });
 
-        static::updating(function ($user) {
-            if ($user->password) {
-                $user->password = Hash::make($user->password);
-            }
-        });
+        // static::updating(function ($user) {
+        //     if ($user->password) {
+        //         $user->password = Hash::make($user->password);
+        //     }
+        // });
     }
 
     public function jobs()
