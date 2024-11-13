@@ -12,7 +12,7 @@ import Image from "~/components/Image";
 const cx = classNames.bind(styles);
 
 function Header() {
-    let currentUser = true;
+    let currentUser = false;
     const [isTippyOpen, setIsTippyOpen] = useState(false);
     const [isScrolling, setIsScrolling] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);  // Track the mobile menu state
@@ -107,10 +107,10 @@ function Header() {
                     </Tippy>
                 ) : (
                     <>
-                        <Button className={cx("groupButtonSignUp")}>
+                        <Button to="/register" className={cx("groupButtonSignUp")}>
                             Sign Up
                         </Button>
-                        <Button className={cx("groupButtonLogin")} outline>
+                        <Button to="/login" className={cx("groupButtonLogin")} outline>
                             Login
                         </Button>
                     </>
