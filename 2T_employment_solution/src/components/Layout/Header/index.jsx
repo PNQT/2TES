@@ -12,15 +12,31 @@ import Image from "~/components/Image";
 const cx = classNames.bind(styles);
 
 function Header() {
-    let currentUser = true;
+    let currentUser = false;
     const [isTippyOpen, setIsTippyOpen] = useState(false);
     const [isScrolling, setIsScrolling] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);  // Track the mobile menu state
     const timer = useRef(null);
+    const menuRef = useRef(null);
+
+    
 
     const handleClick = ()=> {
         setIsTippyOpen(false);
     }
+
+    const handleClickOutside = (event) => {
+         if (menuRef.current && !menuRef.current.contains(event.target)) {
+            setIsMenuOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener ("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+    }, []);
 
     const renderMenu = () => (
         <div className={cx('menu')}>
@@ -122,13 +138,18 @@ function Header() {
                 <FaBars />
             </button>
             {isMenuOpen && (
-        <nav className={cx('mobileMenu')}>
+        <nav className={cx('mobileMenu')} ref={menuRef}>
           <Link to={routesConfig.home} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Home</Link>
           <Link to={routesConfig.search} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Search</Link>
           <Link to={routesConfig.apply} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Apply</Link>
           <Link to={routesConfig.post} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Post Jobs</Link>
           <Link to={routesConfig.categories} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Categories Jobs</Link>
-
+          {!currentUser && (
+                        <>
+                            <Link to="/signup" className={cx('menuItem')} onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+                            <Link to="/login" className={cx('menuItem')} onClick={() => setIsMenuOpen(false)}>Login</Link>
+                        </>
+                    )}
         </nav>
       )}
         </header>

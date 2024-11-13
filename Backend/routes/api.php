@@ -37,6 +37,7 @@ Route::post('/login', [LoginController::class, 'login']);
 
 
 Route::post('/password/email', [ResetPasswordController::class, 'sendResetLinkEmail']);  // Route gửi email
+
 Route::post('/password/reset', [ResetPasswordController::class, 'resetPassword']); 
 
 
