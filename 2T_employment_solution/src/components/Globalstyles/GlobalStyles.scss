@@ -1,0 +1,134 @@
+@import "normalize.css";
+
+:root {
+  --primary: #fe2c55;
+  --black: #000;
+  --white: #fff;
+  --text-color: #333;
+  --yellow:#FFFFF2;
+  --green:#20C6B1;
+  //default layout
+
+  --default-header-height: 4.56rem;
+  --default-header-width: 90rem;
+  --default-header-horizontal-spacer: 24px;
+}
+// font embedd
+  // font embedd
+@font-face {
+  font-family: "Nunito-Bold";
+  src: url('/assets/fonts/Nunito-Bold.ttf');
+  font-weight: 700;
+}   
+@font-face {
+  font-family: "Nunito-Regular";
+  src: url('/assets/fonts/Nunito-Regular.ttf');
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Roboto-Bold";
+  src: url('/assets/fonts/Roboto-Bold.ttf');
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Roboto-Regular";
+  src: url('/assets/fonts/Roboto-Regular.ttf');
+  font-weight: 400;
+}
+  
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "Nunito-Regular", sans-serif;
+  font-size: 1.6rem;
+  color: var(--text-color);
+}
+button,
+input,
+[tabindex] {
+  outline: none;
+  border: none;
+}
+a[href] {
+  color: var(--text-color);
+  text-decoration: none;
+}
+// custom tippy tolltip
+body {
+  .tippy-box {
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.6rem;
+    line-height: 22px;
+    background-color: rgba(84, 84, 84, 0.92);
+  }
+  .tippy-arrow {
+    color: rgba(84, 84, 84, 0.92);
+  }
+  .tippy-content {
+    padding: 8px 9px;
+}
+  .tippy-box[data-placement^="bottom"] > .tippy-arrow:before {
+    top: -8px;
+  }
+}
+// Scrollbar CSS
+html *::-webkit-scrollbar {
+  border-radius: 0;
+  width: 8px;
+}
+html *::-webkit-scrollbar {
+  border-radius: 0;
+  width: 8px;
+}
+html *::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+html *::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+html *::-webkit-scrollbar-track {
+  border-radius: 0;
+  background-color: rgba(0, 0, 0, 0);
+}
+html *::-webkit-scrollbar-track {
+  border-radius: 0;
+  background-color: rgba(0, 0, 0, 0);
+}
+.title{
+  color: #000;
+  font-family: "Nunito-Regular", sans-serif;
+  font-size: 1.7rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+
+  &Center{
+    text-align: center;
+    color: #000;
+    font-family: "Nunito-Regular", sans-serif;
+    font-size: 2.5rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+}
+.decription{
+  color: #000;
+  font-family: "Nunito-Regular", sans-serif;
+  font-size: 1.6rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
