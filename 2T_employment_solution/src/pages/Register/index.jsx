@@ -1,89 +1,112 @@
-import React, { useState } from 'react';
+import { useContext, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; 
-
-// import styles from "./Register.module.scss";  // Uncomment if needed
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '~/Context/AppContext';
 
 const Register = () => {
+  // State quản lý dữ liệu form
   const [formData, setFormData] = useState({
-    user_name: '',
+    name: '',
     email: '',
     password: '',
     password_confirmation: '',
     phone: '',
     user_type: '',
     address: '',
+  
   });
+
+  const {setToken} = useContext(AppContext);
+  
+  // State quản lý lỗi
   const [errors, setErrors] = useState([]);
+  
+  // State quản lý thông báo thành công
   const [successMessage, setSuccessMessage] = useState('');
+  
+  // Sử dụng navigate để chuyển hướng
   const navigate = useNavigate();
 
+  // Hàm thay đổi dữ liệu form khi người dùng nhập
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Kiểm tra form trước khi gửi
+  // Hàm kiểm tra tính hợp lệ của form trước khi gửi
+  const validateForm = () => {
     const validationErrors = [];
-    if (!formData.user_name) validationErrors.push('Tên là bắt buộc');
+    if (!formData.name) validationErrors.push('Tên là bắt buộc');
     if (!formData.email) validationErrors.push('Email là bắt buộc');
     if (!formData.password) validationErrors.push('Mật khẩu là bắt buộc');
-    if (formData.password !== formData.password_confirmation) validationErrors.push('Mật khẩu không khớp');
+    if (formData.password !== formData.password_confirmation)
+      validationErrors.push('Mật khẩu không khớp');
     if (!formData.phone) validationErrors.push('Số điện thoại là bắt buộc');
     if (!formData.user_type) validationErrors.push('Loại người dùng là bắt buộc');
     if (!formData.address) validationErrors.push('Địa chỉ là bắt buộc');
+    return validationErrors;
+  };
 
+  // Hàm gửi dữ liệu form đến server
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Kiểm tra tính hợp lệ của form trước khi gửi
+    const validationErrors = validateForm();
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
       return;
     }
- 
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      data.append(key, value);
-    });
-
-    const csrfToken = document.cookie.split('; ')
-      .find(row => row.startsWith('XSRF-TOKEN='))
-      ?.split('=')[1] || 
-      document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-    if (!csrfToken) {
-      console.error('CSRF token not found.');
-      return;
-    }
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/register', data, {
-        headers: {
-          'X-CSRF-TOKEN': csrfToken,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log("Account created successfully", response.data);
+      // Gửi dữ liệu form tới API đăng ký
+      const response = await axios.post('http://localhost:8000/api/register', formData);
+      console.log('Account created successfully', response.data);
+
+      // Hiển thị thông báo thành công
       setSuccessMessage('Tạo tài khoản thành công!');
+      
+      // Reset lại form
       setFormData({
-        user_name: '',
+        name: '',
         email: '',
         password: '',
+        password_confirmation: '',
         phone: '',
-        user_type: '', 
+        user_type: '',
         address: '',
+       
       });
-        // Hiển thị thông báo và chuyển hướng đến trang login sau khi người dùng bấm "OK"
-        if (window.confirm('Tạo tài khoản thành công! Bạn có muốn chuyển đến trang đăng nhập không?')) {
-          navigate('/login'); // Chuyển hướng đến trang đăng nhập
-        }
-      setErrors([]); // Clear errors on successful submission
+      setErrors([]); // Reset lỗi
+
+      // Xác nhận và điều hướng người dùng đến trang đăng nhập
+      if (
+        window.confirm('Tạo tài khoản thành công! Bạn có muốn chuyển đến trang đăng nhập không?')
+      ) {
+        localStorage.setItem("token", response.data.token);
+        setToken(response.data.token);
+        navigate('/login');
+      }
     } catch (error) {
-      console.error('There was an error!', error);
-      setErrors(['Đã có lỗi xảy ra, vui lòng thử lại!']);
+      console.error('Đã xảy ra lỗi!', error);
+
+      // Kiểm tra và hiển thị lỗi trả về từ API
+      if (error.response && error.response.data) {
+        const serverErrors = error.response.data.errors;
+        if (serverErrors) {
+          // Nếu lỗi trả về là object, chuyển thành mảng các lỗi để hiển thị
+          const errorMessages = Object.values(serverErrors).flat();
+          setErrors(errorMessages);
+        } else {
+          // Nếu không có lỗi chi tiết, hiển thị lỗi mặc định
+          setErrors(['Đã có lỗi xảy ra, vui lòng thử lại!']);
+        }
+      } else {
+        setErrors(['Đã có lỗi xảy ra, vui lòng thử lại!']);
+      }
     }
   };
 
@@ -91,10 +114,11 @@ const Register = () => {
     <div>
       <h2>Đăng ký tài khoản</h2>
 
-      {/* Hiển thị thông báo thành công */}
+      {/* Thông báo thành công */}
       {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
+      
 
-      {/* Hiển thị các lỗi nếu có */}
+      {/* Hiển thị lỗi từ server hoặc lỗi tự kiểm tra */}
       {errors.length > 0 && (
         <div style={{ color: 'red' }}>
           <ul>
@@ -105,14 +129,15 @@ const Register = () => {
         </div>
       )}
 
+      {/* Form đăng ký */}
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="user_name">Tên:</label>
           <input
             type="text"
-            id="user_name"
-            name="user_name"
-            value={formData.name}
+            id="name"
+            name="name"
+            value={formData.user_name}
             onChange={handleChange}
             required
           />
@@ -128,7 +153,6 @@ const Register = () => {
             required
           />
         </div>
-        
         <div>
           <label htmlFor="password">Mật khẩu:</label>
           <input
@@ -176,7 +200,6 @@ const Register = () => {
             <option value="employer">Nhà tuyển dụng</option>
           </select>
         </div>
-  
         <div>
           <label htmlFor="address">Địa chỉ:</label>
           <textarea
@@ -187,7 +210,6 @@ const Register = () => {
             required
           ></textarea>
         </div>
-
         <button type="submit">Đăng ký</button>
       </form>
     </div>

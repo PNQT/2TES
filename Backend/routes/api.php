@@ -3,13 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostJobController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/user', function (Request $request) {
+    return $request->user();    
+})->middleware('auth:sanctum'); 
+
 Route::get('/search',  [PostJobController::class, 'search']);
 
 Route::get('/jobs', [PostJobController::class, 'index']);
@@ -23,17 +24,17 @@ Route::put('/jobs/{id}', [PostJobController::class, 'update']);
 Route::delete('/jobs/{id}', [PostJobController::class, 'destroy']);
 
 
-Route::get('/register', [RegisterController::class, 'index']);
+// Route::get('/register', [RegisterController::class, 'index']);
 
-Route::post('/register', [RegisterController::class, 'signup']);
+// Route::post('/register', [RegisterController::class, 'signup']);
 
-Route::get('/register/{id}', [RegisterController::class, 'show']);
+// Route::get('/register/{id}', [RegisterController::class, 'show']);
 
-Route::put('/register/{id}', [RegisterController::class, 'update']);
+// Route::put('/register/{id}', [RegisterController::class, 'update']);
 
-Route::delete('/register/{id}', [RegisterController::class, 'destroy']);
+// Route::delete('/register/{id}', [RegisterController::class, 'destroy']);
 
-Route::post('/login', [LoginController::class, 'login']);
+// Route::post('/login', [LoginController::class, 'login']);
 
 
 Route::post('/password/email', [ResetPasswordController::class, 'sendResetLinkEmail']);  // Route gửi email
@@ -42,8 +43,15 @@ Route::post('/password/reset', [ResetPasswordController::class, 'resetPassword']
 
 
 
+Route::post('/avatar',[ProfileController::class, 'updateAvatar']);
 
 
 
 
 
+
+
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');

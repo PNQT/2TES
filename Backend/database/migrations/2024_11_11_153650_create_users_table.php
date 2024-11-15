@@ -13,16 +13,15 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id('user_id');
-            $table->string('user_name', 50)->unique();
+            $table->string('user_name')->default('Anonymous'); // Set a default value
+            $table->string('email')->unique();
             $table->string('password');
-            $table->string('email', 100)->unique();
-            $table->string('phone', 15)->nullable();
+            $table->string('phone')->nullable();
+            $table->string('user_type')->nullable();
+            $table->string('avatar')->default('default.jpg');
             $table->string('address')->nullable();
-            $table->string('bio')->nullable();
-            $table->enum('user_type', ['employer', 'candidate']); 
-            $table->string('avatar')->nullable();
-            $table->enum('status', ['active', 'inactive']);
-           
+            $table->text('bio')->default('Chưa có thông tin');
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }
