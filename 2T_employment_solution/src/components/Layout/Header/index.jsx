@@ -9,16 +9,53 @@ import Button from "~/components/Button";
 import routesConfig from "~/config/routes";
 import Image from "~/components/Image";
 
+import { AppContext } from "~/Context/AppContext.jsx";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+
 const cx = classNames.bind(styles);
 
 function Header() {
-    let currentUser = false;
+
     const [isTippyOpen, setIsTippyOpen] = useState(false);
     const [isScrolling, setIsScrolling] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);  // Track the mobile menu state
     const timer = useRef(null);
     const menuRef = useRef(null);
+    const navigate = useNavigate();
 
+    const { user, token, setUser, setToken } = useContext(AppContext);
+
+    async function handleLogout(e) {
+        e.preventDefault();
+        setIsTippyOpen(false);
+    
+        try {
+            const res = await axios.post(
+                "http://localhost:8000/api/logout",
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+    
+            console.log(res.data);
+    
+            if (res.status === 200) {
+                setUser(null);
+                setToken(null);
+                localStorage.removeItem("token");
+                navigate("/");
+            }
+        } catch (error) {
+            console.error("Logout failed:", error.response?.data || error.message);
+            // Optionally display an error message to the user
+        }
+    }
     
 
     const handleClick = ()=> {
@@ -48,7 +85,7 @@ function Header() {
                 <FaCog className={cx('icon')} />
                 Settings
             </Link>
-            <Link to="/logout" className={cx('menuItem', 'logout')} onClick={handleClick}>
+            <Link to="/logout" className={cx('menuItem', 'logout')} onClick={handleLogout}>
                 <FaSignOutAlt className={cx('icon')} />
                 Logout
             </Link>
@@ -107,7 +144,7 @@ function Header() {
             <div className={cx("groupButton")}
                 onClick={() => setIsTippyOpen(!isTippyOpen)}
                   >
-                {currentUser ? (
+                {user ? (
                     <Tippy content={renderMenu()} 
                     interactive={true} 
                     trigger="click" 
@@ -118,7 +155,7 @@ function Header() {
                     >
                         <Image
                             className={cx('user-avatar')}
-                            src="https://via.placeholder.com/150"
+                            src={user.avatar}
                         />
                     </Tippy>
                 ) : (
@@ -144,7 +181,7 @@ function Header() {
           <Link to={routesConfig.apply} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Apply</Link>
           <Link to={routesConfig.post} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Post Jobs</Link>
           <Link to={routesConfig.categories} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Categories Jobs</Link>
-          {!currentUser && (
+          {!user && (
                         <>
                             <Link to="/signup" className={cx('menuItem')} onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
                             <Link to="/login" className={cx('menuItem')} onClick={() => setIsMenuOpen(false)}>Login</Link>
