@@ -201,3 +201,86 @@
       transform: rotate(360deg);
     }
   }
+
+
+  .modalAvatar {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  
+  /* Background overlay (bóng mờ phía ngoài modal) */
+  .ReactModal__Overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+  }
+  
+  /* Header trong modal */
+  .modalAvatar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  /* Form và các thành phần bên trong */
+  .modalAvatar form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .modalAvatar label {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .modalAvatar input[type="file"] {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+  
+  .modalAvatar input[type="file"]:hover {
+    border-color: #4CAF50;
+   
+  }
+  
+  .modalAvatar img {
+    border-radius: 50%;
+    margin-top: 10px;
+    border: 2px solid #ddd;
+    object-fit: cover;
+    width: 300px;
+    height: 300px;
+    margin: auto;
+  }
+  
+  
+  
+  
+  
+  .groupButton{
+    margin: 30px;
+    display: flex;
+    flex-grow: inherit;
+    justify-content: space-around;
+  }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -63,5 +64,33 @@ class AuthController extends Controller
             'message' => 'Logged out'
         ];
 
+    }
+
+    public function changePassword(Request $request)
+    {   
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+            $request->validate([
+                    'password' => ['required', 'string'],
+                    'new_password' => ['required', 'string', 'min:8'],
+            ]);
+
+        if (!Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['The provided password does not match our records.'],
+            ]);
+        }
+
+        // Update the password
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'message' => 'Password successfully updated!',
+        ]);
     }
 }
