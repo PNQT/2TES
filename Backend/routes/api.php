@@ -4,8 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\ResetPasswordController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();    
@@ -43,14 +43,11 @@ Route::post('/password/reset', [ResetPasswordController::class, 'resetPassword']
 
 
 
-Route::post('/avatar',[ProfileController::class, 'updateAvatar']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/user/avatar', [ProfileController::class, 'updateAvatar']);
+    Route::post( '/user/profile', [ProfileController::class, 'informationUpdate']); 
 
-
-
-
-
-
-
+});
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

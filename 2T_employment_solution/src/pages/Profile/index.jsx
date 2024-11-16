@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import classNames from "classnames/bind";
 import Modal from "react-modal";
-import { FaCamera } from "react-icons/fa"; 
+import { FaCamera } from "react-icons/fa";
 import styles from "./Profile.module.scss";
 import Image from "~/components/Image";
 import Button from "~/components/Button";
@@ -11,10 +11,10 @@ import images from "~/assets/images";
 
 const cx = classNames.bind(styles);
 
-Modal.setAppElement("#root"); 
+Modal.setAppElement("#root");
 
 function Profile() {
-  const { user, setUser, token } = useContext(AppContext); 
+  const { user, setUser, token } = useContext(AppContext);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [avatarModalIsOpen, setAvatarModalIsOpen] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
@@ -39,7 +39,6 @@ function Profile() {
       }
     };
 
-    
     if (!user && token) {
       fetchUserData();
     }
@@ -78,21 +77,23 @@ function Profile() {
   // Handle submitting the avatar change
   const handleAvatarChange = async (event) => {
     event.preventDefault();
-    
+
     const formData = new FormData();
     formData.append("avatar", event.target.avatarInput.files[0]);
-  
+
     try {
-      const response = await axios.post("http://localhost:8000/api/avatar", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Thêm token vào header
-          "Content-Type": "multipart/form-data", // Đảm bảo gửi dưới dạng form-data
-        },
-      });
-  
+      const response = await axios.post(
+        "http://localhost:8000/api/user/avatar",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (response.status === 200) {
         const data = response.data;
-        setUser((prevUser) => ({ ...prevUser, avatar: data.avatar_url })); // Cập nhật URL avatar mới
+        setUser((prevUser) => ({ ...prevUser, avatar: data.avatar_url }));
         avatarCloseModal();
         alert("Avatar đã được thay đổi thành công!");
       } else {
@@ -102,10 +103,49 @@ function Profile() {
       console.error("Lỗi khi thay đổi avatar:", error);
       alert("Có lỗi xảy ra. Vui lòng thử lại!");
     }
+  };
 
-  }
+  const handleChangeInfo = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("user_name", e.target.user_name.value);
+    formData.append("phone", e.target.phone.value);
+    formData.append("address", e.target.address.value);
+    formData.append("bio", e.target.bio.value);
+    
+    if (!token) {
+      alert("User is not authenticated. Please log in.");
+      return;
+    }
 
+    try {
+      const res = await axios.post("http://localhost:8000/api/user/profile", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
+      if (res.status === 200) {
+        const data = res.data;
+        setUser((prevUser) => ({
+          ...prevUser,
+          user_name: data.user.user_name,
+          phone: data.user.phone,
+          address: data.user.address,
+          bio: data.user.bio,
+        }));
+        console.log(user);
+        
+        closeModal();
+      } else {
+        alert("Thay đổi thông tin thất bại!");
+      }
+    } catch (error) {
+      console.error("Lỗi khi thay đổi thông tin:", error);
+      alert("Có lỗi xảy ra. Vui lòng thử lại!");
+    }
+  };
 
   return (
     <div className={cx("profile-container")}>
@@ -121,7 +161,7 @@ function Profile() {
             <FaCamera />
           </div>
         </div>
-        <h1 className={cx("profile-name")}>{user.name || "null"}</h1>
+        <h1 className={cx("profile-name")}>{user?.user_name || "null"}</h1>
         <Button className={cx("edit-profile-button")} onClick={openModal}>
           Edit Profile
         </Button>
@@ -154,35 +194,31 @@ function Profile() {
         onRequestClose={closeModal}
         contentLabel="Edit Profile"
         className={cx("modal")}
-        overlayClassName={cx("overlay")}
+        overlayClassName={cx("overlay")
+        }
       >
         <h2>Edit Profile</h2>
-        <form>
+        <form onSubmit={handleChangeInfo}
+        >
           <div className={cx("form-group")}>
             <label htmlFor="name">Name</label>
             <input
               type="text"
               id="name"
-              name="name"
-              defaultValue={user?.name || "null"}
+              name="user_name"
+              defaultValue={user?.user_name || ""}
+              placeholder="Enter your name" 
             />
           </div>
-          <div className={cx("form-group")}>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              defaultValue={user?.email || "null"}
-            />
-          </div>
+
           <div className={cx("form-group")}>
             <label htmlFor="phone">Phone</label>
             <input
               type="tel"
               id="phone"
               name="phone"
-              defaultValue={user?.phone || "null"}
+              defaultValue={user?.phone || ""}
+              placeholder="Enter your phone number"
             />
           </div>
           <div className={cx("form-group")}>
@@ -191,7 +227,8 @@ function Profile() {
               type="text"
               id="address"
               name="address"
-              defaultValue={user?.address || "null"}
+              defaultValue={user?.address || ""}
+              placeholder="Enter your address"
             />
           </div>
           <div className={cx("form-group")}>
@@ -199,15 +236,18 @@ function Profile() {
             <textarea
               id="bio"
               name="bio"
-              defaultValue={
-                user?.bio || "null"
-              }
+              defaultValue={user?.bio || ""}
+              placeholder="Write a short bio about yourself"
             ></textarea>
           </div>
-          <Button type="submit">Save</Button>
-          <Button type="button" onClick={closeModal}>
-            Cancel
-          </Button>
+          <div className={cx("form-actions")}>
+            <Button type="submit" >
+              Save
+            </Button>
+            <Button type="button" onClick={closeModal}>
+              Cancel
+            </Button>
+          </div>
         </form>
       </Modal>
 

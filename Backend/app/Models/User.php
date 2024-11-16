@@ -52,7 +52,7 @@ class User extends Authenticatable
             if ($user->password) {
                 $user->password = Hash::make($user->password);
             }
-
+            $user->user_name = $user->user_name ?? 'Anonymous';
             $user->status = $user->status ?? 'active';
             $user->avatar = $user->avatar ?? 'uploads/default-avatar.jpg';
             $user->bio = $user->bio ?? 'Chưa có thông tin';
