@@ -1,7 +1,7 @@
-import { useContext, useState } from 'react';
+import {  useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { AppContext } from '~/Context/AppContext';
+// import { AppContext } from '~/Context/AppContext';
 
 const Register = () => {
   // State quản lý dữ liệu form
@@ -16,7 +16,7 @@ const Register = () => {
   
   });
 
-  const {setToken} = useContext(AppContext);
+  // const {setToken} = useContext(AppContext);
   
   // State quản lý lỗi
   const [errors, setErrors] = useState([]);
@@ -62,14 +62,11 @@ const Register = () => {
     }
 
     try {
-      // Gửi dữ liệu form tới API đăng ký
       const response = await axios.post('http://localhost:8000/api/register', formData);
       console.log('Account created successfully', response.data);
 
-      // Hiển thị thông báo thành công
       setSuccessMessage('Tạo tài khoản thành công!');
       
-      // Reset lại form
       setFormData({
         name: '',
         email: '',
@@ -82,18 +79,14 @@ const Register = () => {
       });
       setErrors([]); // Reset lỗi
 
-      // Xác nhận và điều hướng người dùng đến trang đăng nhập
+     
       if (
         window.confirm('Tạo tài khoản thành công! Bạn có muốn chuyển đến trang đăng nhập không?')
       ) {
-        localStorage.setItem("token", response.data.token);
-        setToken(response.data.token);
         navigate('/login');
       }
     } catch (error) {
       console.error('Đã xảy ra lỗi!', error);
-
-      // Kiểm tra và hiển thị lỗi trả về từ API
       if (error.response && error.response.data) {
         const serverErrors = error.response.data.errors;
         if (serverErrors) {

@@ -61,45 +61,57 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
-
-
     public function updateAvatar(Request $request)
-{
-    $request->validate([
-        'avatar' => ['required', 'image', 'max:2048'], // Chỉ nhận file ảnh, tối đa 2MB
-    ]);
-
-    $user = $request->user();
-
-    // Kiểm tra xem người dùng có tồn tại không
-    if (!$user) {
-        return response()->json([
-            'message' => 'User not found.',
-        ], 404);
+    {
+        $request->validate([
+            'avatar' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'], // Đảm bảo tệp là hình ảnh hợp lệ
+        ]);
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+        try {
+            if ($request->hasFile('avatar')) {
+                $imageName = time() . '.' . $request->avatar->extension();
+                $request->avatar->move(public_path('uploads'), $imageName);
+                $user->avatar = 'uploads/' . $imageName;
+                $user->save();
+            }
+            $avatarUrl = asset('uploads/' . $imageName);
+            return response()->json([
+                'message' => 'Avatar updated successfully!',
+                'avatar_url' => $avatarUrl, // Trả về URL đầy đủ
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error updating avatar: ' . $e->getMessage()], 500);
+        }
     }
 
-    // Xóa avatar cũ nếu tồn tại
-    if ($user->avatar) {
-        Storage::disk('public')->delete($user->avatar);
-    }
-
-    // Lưu file mới và tạo URL đầy đủ của file
-    $filename = $user->id . '_avatar.' . $request->file('avatar')->getClientOriginalExtension();
-    $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
-
-    // Tạo URL đầy đủ của avatar
-    $avatarUrl = asset('storage/avatars/' . $filename);
-
-    // Cập nhật URL vào database
-    $user->avatar = $avatarUrl; // Lưu URL đầy đủ vào database
-    $user->save();
-
-    // Trả về URL mới của avatar
-    return response()->json([
-        'message' => 'Avatar updated successfully!',
-        'avatar_url' => $avatarUrl,
-    ], 200);
-}
-
-
+   
+   
+        public function informationUpdate(Request $request)
+        {
+            $user = $request->user();  // Lấy user từ yêu cầu (đã được xác thực qua Sanctum)
+    
+            if (!$user) {
+                return response()->json(['message' => 'User not found.'], 404);
+            }
+    
+            try { 
+                $user->user_name = $request->user_name;     
+                $user->phone = $request->phone;
+                $user->address = $request->address;
+                $user->bio = $request->bio;
+                $user->save();  // Lưu thay đổi
+    
+                return response()->json([
+                    'message' => 'Information updated successfully!',
+                    'user' => $user,  // Trả lại đối tượng người dùng đã được cập nhật
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Error updating information: ' . $e->getMessage()], 500);
+            }
+        }
+    
+    
 }
