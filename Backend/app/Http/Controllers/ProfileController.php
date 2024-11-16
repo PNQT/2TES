@@ -112,6 +112,5 @@ class ProfileController extends Controller
                 return response()->json(['message' => 'Error updating information: ' . $e->getMessage()], 500);
             }
         }
-    
-    
+
 }
