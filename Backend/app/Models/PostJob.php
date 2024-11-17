@@ -33,6 +33,8 @@ class PostJob extends Model
         'salary',
         'location',
         'job_type',
+        'created_at',
+        'updated_at',
         'contact_email',
         'contact_phone',
         'image',

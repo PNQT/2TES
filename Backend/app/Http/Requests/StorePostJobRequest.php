@@ -43,6 +43,7 @@ class StorePostJobRequest extends FormRequest
             'salary' => 'nullable|numeric',
             'location' => 'required|string',
             'job_type' => 'required|string',
+            'created_at' => 'nullable|date',
             'contact_email' => 'required|email',
             'contact_phone' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',

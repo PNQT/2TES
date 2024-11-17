@@ -11,6 +11,7 @@ import ResetPassword from '~/pages/ResetPassword';
 import SendEmail from '~/pages/SendEmail';
 import { DefaultLayout } from '~/components/Layout';
 import routesConfig from "~/config/routes"
+import YourPosted from '~/pages/YourPosted';
 
 const publicRoutes = [
   { path: routesConfig.home, component: Home, layout: DefaultLayout },
@@ -23,7 +24,8 @@ const publicRoutes = [
   { path: routesConfig.register, component: Register, layout: DefaultLayout },
   { path: routesConfig.login, component: Login, layout: DefaultLayout},
   { path: routesConfig.resetpassword, component: ResetPassword, layout: DefaultLayout},
-  { path: routesConfig.sendemail, component: SendEmail, layout: DefaultLayout}
+  { path: routesConfig.sendemail, component: SendEmail, layout: DefaultLayout},
+  { path: routesConfig.yourposted, component: YourPosted, layout: DefaultLayout}
 
 
 ];

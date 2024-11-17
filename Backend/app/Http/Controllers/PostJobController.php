@@ -12,17 +12,17 @@ class PostJobController extends Controller
     {
         // Retrieve the validated input data
         $validated = $request->validated();
-
-
         if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads'), $imageName);
-            $validated['image'] = 'uploads/' . $imageName;
-        }
+                            $imageName = time() . '.' . $request->image->extension();
+                            $request->image->move(public_path('uploads'), $imageName);
+                            $validated['image'] = 'uploads/' . $imageName;
+                        }
+
+     
 
         // Save data to the database
         $job = PostJob::create($validated);
-
+      
         return response()->json([
             'message' => 'Job posted successfully',
             'job' => $job
@@ -107,11 +107,13 @@ class PostJobController extends Controller
                 ->where('title', 'like', '%' . $keyword . '%')
                 ->orWhere('description', 'like', '%' . $keyword . '%')
                 ->orWhere('requirements', 'like', '%' . $keyword . '%')
+                ->orwhere('company_name', 'like', '%' . $keyword . '%')
                 ->orWhere('location', 'like', '%' . $keyword . '%')
-                ->orWhere('employmentType', 'like', '%' . $keyword . '%')
+                ->orWhere('job_type', 'like', '%' . $keyword . '%')
                 ->orWhere('salary', 'like', '%' . $keyword . '%')
-                ->orWhere('deadline', 'like', '%' . $keyword . '%')
-                ->orWhere('companyInfo', 'like', '%' . $keyword . '%')
+
+                ->orWhere('contact_email', 'like', '%' . $keyword . '%')
+                ->orWhere('contact_phone', 'like', '%' . $keyword . '%')
                 ->get();
 
         }
@@ -120,5 +122,21 @@ class PostJobController extends Controller
             'message' => 'Job search results',
             'data' => $jobs
         ], 200);
+    }
+    public function getUserPostedJobs(Request $request)
+    {
+        // Lấy `user_id` từ request
+        $userId = $request->input('user_id');
+
+        // Kiểm tra nếu `user_id` không được cung cấp
+        if (!$userId) {
+            return response()->json(['error' => 'User ID is required'], 400);
+        }
+
+        // Lấy danh sách công việc dựa trên `user_id`
+        $jobs = PostJob::where('employer_id', $userId)->get();
+
+        // Trả về danh sách công việc
+        return response()->json($jobs);
     }
 }

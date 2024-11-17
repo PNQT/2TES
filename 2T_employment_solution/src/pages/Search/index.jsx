@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import Search from "~/components/Search";
 import JobCard from "~/components/JobCard";
 
+
 const cx = classNames.bind(styles);
 Modal.setAppElement('#root');
 
@@ -54,16 +55,16 @@ function SearchResults() {
             <div className={cx("groupCard")}>
                 {searchResult.length > 0 ? (
                     searchResult.map((job) => (
-                        <div key={job.id} className={cx("cardItem")}>
+                        <div key={job.job_id} className={cx("cardItem")}>
                             <JobCard 
                                 src={`http://localhost:8000/${job.image}`}
                                 name={job.title}
                                 address={job.location}
-                                position={job.benefits}
-                                shortdecr1={job.employmentType}
+                                position={job.company_name}
+                                shortdecr1={job.job_type}
                                 shortdecr2={job.salary}
-                                shortdecr3={job.deadline}
-                                description={job.description}
+                                shortdecr3={job.created_at}
+                                decription={job.description}
                                 onClick={() => openModal(job)}
                             />
                         </div>
@@ -85,15 +86,13 @@ function SearchResults() {
                         <h2>{selectedJob.title}</h2>
                         <p>{selectedJob.description}</p>
                         <p><strong>Requirements:</strong> {selectedJob.requirements}</p>
-                        <p><strong>Benefits:</strong> {selectedJob.benefits}</p>
-                        <p><strong>Company Info:</strong> {selectedJob.companyInfo}</p>
+                        <p><strong>Company Info:</strong> {selectedJob.company_name}</p>
                         <p><strong>Location:</strong> {selectedJob.location}</p>
-                        <p><strong>Employment Type:</strong> {selectedJob.employmentType}</p>
+                        <p><strong>Employment Type:</strong> {selectedJob.job_type}</p>
                         <p><strong>Salary:</strong> {selectedJob.salary}</p>
-                        <p><strong>Deadline:</strong> {selectedJob.deadline}</p>
-                        <p><strong>Contact Email:</strong> {selectedJob.contactEmail}</p>
-                        <p><strong>Contact Phone:</strong> {selectedJob.contactPhone}</p>
-                        <p><strong>Application Process:</strong> {selectedJob.applicationProcess}</p>
+                        <p><strong>Posted at:</strong> {selectedJob.created_at}</p>
+                        <p><strong>Contact Email:</strong> {selectedJob.contact_email}</p>
+                        <p><strong>Contact Phone:</strong> {selectedJob.contact_phone}</p>
                         <button onClick={closeModal}>Close</button>
                     </div>
                 )}
@@ -102,4 +101,4 @@ function SearchResults() {
     );                                                                                                                                              
 }
 
-export default SearchResults;                                                                                     
+export default SearchResults;

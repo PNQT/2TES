@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const Register = () => {
   // State quản lý dữ liệu form
   const [formData, setFormData] = useState({
-    name: '',
+    user_name: '',
     email: '',
     password: '',
     password_confirmation: '',
@@ -68,7 +68,7 @@ const Register = () => {
       setSuccessMessage('Tạo tài khoản thành công!');
       
       setFormData({
-        name: '',
+        user_name: '',
         email: '',
         password: '',
         password_confirmation: '',
@@ -128,8 +128,8 @@ const Register = () => {
           <label htmlFor="user_name">Tên:</label>
           <input
             type="text"
-            id="name"
-            name="name"
+            id="user_name"
+            name="user_name"
             value={formData.user_name}
             onChange={handleChange}
             required
