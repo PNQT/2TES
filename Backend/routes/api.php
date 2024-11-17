@@ -23,6 +23,8 @@ Route::put('/jobs/{id}', [PostJobController::class, 'update']);
 
 Route::delete('/jobs/{id}', [PostJobController::class, 'destroy']);
 
+Route::post('/jobs/YourPosted', [PostJobController::class, 'getUserPostedJobs']);
+
 
 // Route::get('/register', [RegisterController::class, 'index']);
 
@@ -52,3 +54,4 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+

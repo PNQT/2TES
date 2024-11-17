@@ -8,7 +8,7 @@ const cx = classNames.bind(styles);
 // eslint-disable-next-line react/prop-types
 function JobCard({src,name,address,position,shortdecr1,shortdecr2,shortdecr3,decription,onClick}) {
     return ( 
-        <div className={cx("container")}onClick={onClick}>
+        <div className={cx("container")}>
             <div className={cx("header")}>
                 <div className={cx("wrapper")}>
                     <Image  
@@ -50,7 +50,7 @@ function JobCard({src,name,address,position,shortdecr1,shortdecr2,shortdecr3,dec
             <div className={cx("footer")}>
                
                 <Button className={cx("buttonApply")}>Apply</Button>
-                <Button className={cx("buttonReadMore")} outline>Read More</Button>
+                <Button className={cx("buttonReadMore")} onClick={onClick} outline>Read More</Button>
                
             </div>
         </div>
