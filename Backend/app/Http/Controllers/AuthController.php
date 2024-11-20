@@ -28,8 +28,7 @@ class AuthController extends Controller
                 'message' => 'The provided credentials are incorrect.'
             ], 401);
         }
-
-
+        
         $tokenName = $user->name ?? 'User Token';
         $token = $user->createToken($tokenName)->plainTextToken;
 
@@ -52,7 +51,7 @@ class AuthController extends Controller
 
         $user = User::create($fields);
 
-        $token = $user->createToken($request->name);
+        $token = $user->createToken($request->user_name);
 
         return [
             'user' => $user,
@@ -95,5 +94,10 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Password successfully updated!',
         ]);
+    }
+
+    public function getAuthenticatedUser(Request $request)
+    {
+        return response()->json($request->user());
     }
 }

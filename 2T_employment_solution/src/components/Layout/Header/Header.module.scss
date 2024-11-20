@@ -79,6 +79,8 @@
         justify-content: flex-end;
         align-items: center;
         gap: 1rem;
+        // display: flex;
+        // align-items: center;
         &Login {
             display: flex;
             width: 6.25rem;
@@ -125,10 +127,12 @@
         }
 
     }
-    .groupButton {
+    .right{
       display: flex;
-      align-items: center;
+      flex-direction: row;
+      gap: 50px;
     }
+  
     
     .user-avatar {
       cursor: pointer;
@@ -142,7 +146,7 @@
       display: flex;
       flex-direction: column;
       margin: -9px;
-      width: 170px;
+    
       
     }
     
@@ -152,7 +156,7 @@
       padding: 8px 16px;
       cursor: pointer;
       text-decoration: none;
-      color: inherit;
+      color: black;
       &:hover { 
         background-color: #f0f0f0;
       }

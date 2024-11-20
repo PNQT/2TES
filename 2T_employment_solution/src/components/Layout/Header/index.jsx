@@ -2,12 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import classNames from "classnames/bind";
 import { Link } from "react-router-dom";
 import Tippy from '@tippyjs/react';
-import { FaUser, FaCog, FaSignOutAlt, FaBars, FaPodcast, FaPassport } from 'react-icons/fa'; // Import icons
+import { FaUser, FaCog, FaSignOutAlt, FaBars, FaSave, FaPassport } from 'react-icons/fa'; // Import icons
 
 import styles from "./Header.module.scss";
 import Button from "~/components/Button";
 import routesConfig from "~/config/routes";
 import Image from "~/components/Image";
+import Notification from "~/components/Notification";
 
 import { AppContext } from "~/Context/AppContext.jsx";
 import { useContext } from "react";
@@ -152,33 +153,37 @@ function Header() {
                     About
                 </Link> */}
             </nav>
-            <div className={cx("groupButton")}
-                onClick={() => setIsTippyOpen(!isTippyOpen)}
-                  >
-                {user ? (
-                    <Tippy content={renderMenu()} 
-                    interactive={true} 
-                    trigger="click" 
-                    placement="bottom" 
-                    className="tipppy"
-                    visible={isTippyOpen}
-                    onClickOutside={() => setIsTippyOpen(false)}
-                    >
-                        <Image
-                            className={cx('user-avatar')}
-                            src={user.avatar}
-                        />
-                    </Tippy>
-                ) : (
-                    <>
-                        <Button to="/register" className={cx("groupButtonSignUp")}>
-                            Sign Up
-                        </Button>
-                        <Button to="/login" className={cx("groupButtonLogin")} outline>
-                            Login
-                        </Button>
-                    </>
-                )}
+            <div className={cx("right")}>
+                <div className={cx("groupButton")}
+                    onClick={() => setIsTippyOpen(!isTippyOpen)}
+                      >
+                    {user ? (
+                        <Tippy content={renderMenu()} 
+                        interactive={true} 
+                        trigger="click" 
+                        placement="bottom"  
+                        // className="tipppy"
+                        visible={isTippyOpen}
+                        onClickOutside={() => setIsTippyOpen(false)}
+                        >
+                            <Image
+                                className={cx('user-avatar')}
+                                src={user.avatar}
+                            />
+                        </Tippy>
+                    ) : (
+                        <>
+                            <Button to="/register" className={cx("groupButtonSignUp")}>
+                                Sign Up
+                            </Button>
+                            <Button to="/login" className={cx("groupButtonLogin")} outline>
+                                Login
+                            </Button>
+                        </>
+                    )}
+                   
+                </div>
+                <Notification/>
             </div>
 
             {/* Hamburger menu button */}
@@ -199,7 +204,9 @@ function Header() {
                         </>
                     )}
         </nav>
-      )}
+      )} 
+        
+        
         </header>
     );
 }

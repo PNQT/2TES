@@ -11,12 +11,15 @@ class Application extends Model
 
     protected $table = 'applications';
 
-    protected $primaryKey = ['application_id','applicant_id','job_id'];
+    protected $primaryKey = 'application_id';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'applicant_id',
         'job_id',
         'applicant_id',
+        'poster_id',
         'cover_letter',
         'resume',
         'status',

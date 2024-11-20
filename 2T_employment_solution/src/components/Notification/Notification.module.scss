@@ -1,0 +1,39 @@
+.notification-container {
+    position: relative;
+    .header{
+       height: 30px;
+       font-size: 18px;
+       display: flex;
+       justify-content: center;
+    }
+}
+
+.notification-icon {
+    font-size: 24px;
+    cursor: pointer;
+    
+}
+.notification{
+     width: 250px;
+     max-height:400px;
+     margin: -10px;
+     overflow-y: auto;
+     background-color: rgb(255, 255, 255);
+}
+
+.group-notification{
+     display: flex;
+
+     
+     .notification-count{
+           position: absolute;
+           color: red;
+           margin-left: -10px;
+           top: 1px;
+           border-radius: 50%;
+           background-color:red;
+           width: 10px;
+           height: 10px;
+     
+     }
+}

@@ -6,6 +6,8 @@ use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ApplicationController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();    
@@ -49,9 +51,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/avatar', [ProfileController::class, 'updateAvatar']);
     Route::post( '/user/profile', [ProfileController::class, 'informationUpdate']); 
     Route::post('/user/changePassword', [AuthController::class, 'changePassword']);  
+
 });
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/logout', action: [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'getAuthenticatedUser']);
+
+
+
+Route::get('/user/{id}', [UserController::class, 'getUserById']);
+
+  
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/applications', [ApplicationController::class, 'store']);
+    Route::get('/notifications', [ApplicationController::class, 'getNotifications']);
+});
 

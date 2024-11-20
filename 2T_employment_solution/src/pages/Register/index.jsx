@@ -39,7 +39,7 @@ const Register = () => {
   // Hàm kiểm tra tính hợp lệ của form trước khi gửi
   const validateForm = () => {
     const validationErrors = [];
-    if (!formData.name) validationErrors.push('Tên là bắt buộc');
+    if (!formData.user_name) validationErrors.push('Tên là bắt buộc');
     if (!formData.email) validationErrors.push('Email là bắt buộc');
     if (!formData.password) validationErrors.push('Mật khẩu là bắt buộc');
     if (formData.password !== formData.password_confirmation)
