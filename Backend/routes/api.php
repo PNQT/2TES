@@ -74,8 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications', [ApplicationController::class, 'getNotifications']);
     Route::get('/applications', [ApplicationController::class, 'index']);
 
-    Route::put('/notifications/{job_id}/{poster_id}/read', [NotificationController::class, 'markAsRead']);
-
     
 });
 
+Route::put('/notifications/{job_id}/{poster_id}/read', [NotificationController::class, 'markAsRead']);

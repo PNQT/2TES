@@ -17,12 +17,13 @@
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
                 });
-            if (res === 200){
+            if (res.status === 200){
                 console.log("Read notification successfully");
-                console.log(jobName)
+                console.log(res.data);
             }
             else{
                 console.log("Read notification failed");
+                console.log(res.status)
             }
           }
             catch (error) {

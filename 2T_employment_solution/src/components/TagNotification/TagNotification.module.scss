@@ -56,12 +56,12 @@
             .jobName{
                  color:#65686C;
                  margin-top: 3px;
-                 &.Unread{
+                 &.unread{
                     color: #212122;
                 } 
             }
 
-           &.Unread{
+           &.unread{
                color: #212122;
            } 
         }
@@ -74,7 +74,7 @@
         margin-top: 35px;
         display: none;
 
-        &.Unread{
+        &.unread{
             display: block;
         }
     }
