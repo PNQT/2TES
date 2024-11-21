@@ -17,6 +17,11 @@ const testimonials = [
     author: "Sarah Johnson",
     role: "Software Engineer"
   },
+  {
+    description: "I was able to secure a job within a month of using Job Hunt. The platform is intuitive and easy to navigate, and the job listings are updated regularly. I am grateful for the support I received from the team and would recommend Job Hunt to anyone looking for a new job.",
+    author: "John Doe",
+    role: "Data Analyst"
+  },
   // Add more testimonials if needed
 ];
 

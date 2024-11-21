@@ -160,7 +160,7 @@ function Header() {
                     {user ? (
                         <Tippy content={renderMenu()} 
                         interactive={true} 
-                        trigger="click" 
+                        // trigger="mouseenter" 
                         placement="bottom"  
                         // className="tipppy"
                         visible={isTippyOpen}

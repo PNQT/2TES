@@ -17,7 +17,9 @@ class ApplicationController extends Controller
             'job_id' => 'required|exists:jobs,job_id',
             'applicant_id' => 'required|exists:users,user_id',
             'cover_letter' => 'nullable|string',
-            // 'resume_path' => 'nullable|string',
+            'poster_id' => 'nullable|exists:users,user_id',
+            'resume_path' => 'nullable|string',
+            
         ]);
 
         $user = $request->user();
@@ -33,7 +35,8 @@ class ApplicationController extends Controller
             'job_id' => $request->job_id,
             'applicant_id' => $request->applicant_id,
             'cover_letter' => $request->cover_letter,
-            // 'resume_path' => $request->resume_path,
+            'resume_path' => $request->resume_path,
+            'poster_id' => $request->poster_id,
             'status' => 'unread',
         ]);
 

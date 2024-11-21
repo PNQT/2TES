@@ -112,6 +112,7 @@ function SearchResults() {
                     applicant_id: applicant_id,
                     cover_letter: 'Eiu oi',
                     resume_path: 'bin nè',
+                    poster_id: posterID
                 },
                 {
                     headers: {

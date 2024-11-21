@@ -14,7 +14,7 @@
     
 }
 .notification{
-     width: 250px;
+     width: 300px;
      max-height:400px;
      margin: -10px;
      overflow-y: auto;
@@ -28,7 +28,7 @@
      .notification-count{
            position: absolute;
            color: red;
-           margin-left: -10px;
+           margin-left: 15px;
            top: 1px;
            border-radius: 50%;
            background-color:red;

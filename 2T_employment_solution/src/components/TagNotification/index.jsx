@@ -1,14 +1,37 @@
     import classNames from "classnames/bind";
     import styles from "./TagNotification.module.scss";
     import { IoIosNotifications } from "react-icons/io";
+    import axios from "axios";
 
     // Bind classNames to styles for scoped CSS classes
     const cx = classNames.bind(styles);
 
     // eslint-disable-next-line react/prop-types
-    function TagNotification({ user, jobName, isUnread }) {
+    function TagNotification({ user, jobName, isUnread, job_id, poster_id }) {
+        const hadleClick = async () => {
+          
+          try{
+            const res = await axios.put(`http://localhost:8000/api/notifications/${job_id}/${poster_id}/read`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                });
+            if (res === 200){
+                console.log("Read notification successfully");
+                console.log(jobName)
+            }
+            else{
+                console.log("Read notification failed");
+            }
+          }
+            catch (error) {
+                console.error("Error fetching user ID:", error);
+            }
+            
+        };
         return (
-            <div className={cx("container")}>
+            <div className={cx("container")} onClick={hadleClick}>
                 <div className={cx("left")}>
                     <IoIosNotifications />
                 </div>
