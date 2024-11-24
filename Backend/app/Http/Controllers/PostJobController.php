@@ -16,7 +16,7 @@ class PostJobController extends Controller
                             $imageName = time() . '.' . $request->image->extension();
                             $request->image->move(public_path('uploads'), $imageName);
                             $validated['image'] = 'uploads/' . $imageName;
-                        }
+        }
 
      
 
@@ -37,12 +37,13 @@ class PostJobController extends Controller
             'jobs' => $jobs
         ], 200);
     }
-    public function show($id)
+    public function show($job_id)
     {
-        $job = PostJob::find($id);
+        $job = PostJob::where('job_id',$job_id)->get();
 
         if (!$job) {
             return response()->json([
+                'success' => false,
                 'message' => 'Job not found'
             ], 404);
         }

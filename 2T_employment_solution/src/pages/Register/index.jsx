@@ -1,7 +1,12 @@
 import {  useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import styles from './Register.module.scss';
+import classNames from 'classnames/bind';
+import Button from '~/components/Button';
 // import { AppContext } from '~/Context/AppContext';
+
+const cx = classNames.bind(styles);
 
 const Register = () => {
   // State quản lý dữ liệu form
@@ -39,7 +44,7 @@ const Register = () => {
   // Hàm kiểm tra tính hợp lệ của form trước khi gửi
   const validateForm = () => {
     const validationErrors = [];
-    if (!formData.name) validationErrors.push('Tên là bắt buộc');
+    if (!formData.user_name) validationErrors.push('Tên là bắt buộc');
     if (!formData.email) validationErrors.push('Email là bắt buộc');
     if (!formData.password) validationErrors.push('Mật khẩu là bắt buộc');
     if (formData.password !== formData.password_confirmation)
@@ -104,8 +109,8 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>Đăng ký tài khoản</h2>
+    <div className={cx("container")}>
+    <h1 className={cx("header")}>Create a new account</h1>
 
       {/* Thông báo thành công */}
       {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
@@ -123,9 +128,9 @@ const Register = () => {
       )}
 
       {/* Form đăng ký */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="user_name">Tên:</label>
+      <form onSubmit={handleSubmit} className={cx("form")}>
+        <div className={cx("formitem")}>
+          <label htmlFor="user_name" className={cx("name")}>Name:</label>
           <input
             type="text"
             id="user_name"
@@ -133,10 +138,11 @@ const Register = () => {
             value={formData.user_name}
             onChange={handleChange}
             required
+            className={cx("input")}
           />
         </div>
-        <div>
-          <label htmlFor="email">Email:</label>
+        <div className={cx("formitem")}>
+          <label htmlFor="email"  className={cx("name")}>Email address:</label>
           <input
             type="email"
             id="email"
@@ -144,21 +150,24 @@ const Register = () => {
             value={formData.email}
             onChange={handleChange}
             required
+            className={cx("input")}
           />
         </div>
-        <div>
-          <label htmlFor="password">Mật khẩu:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
+        <div className={cx("formitem")}>
+         <label htmlFor="password"  className={cx("name")}>Password:</label>
+         <div className={cx("input")}>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+         </div>
         </div>
-        <div>
-          <label htmlFor="password_confirmation">Xác nhận mật khẩu:</label>
+        <div className={cx("formitem")}>
+          <label htmlFor="password_confirmation"  className={cx("name")}>Confirm password:</label>
           <input
             type="password"
             id="password_confirmation"
@@ -166,10 +175,11 @@ const Register = () => {
             value={formData.password_confirmation}
             onChange={handleChange}
             required
+            className={cx("input")}
           />
         </div>
-        <div>
-          <label htmlFor="phone">Số điện thoại:</label>
+        <div className={cx("formitem")}>
+          <label htmlFor="phone"  className={cx("name")}>Phone Number:</label>
           <input
             type="tel"
             id="phone"
@@ -177,33 +187,35 @@ const Register = () => {
             value={formData.phone}
             onChange={handleChange}
             required
+            className={cx("input")}
           />
         </div>
-        <div>
-          <label htmlFor="user_type">Loại người dùng:</label>
+        <div className={cx("formitem")}>
+          <label htmlFor="user_type"  className={cx("name")}>Type of user:</label>
           <select
             id="user_type"
             name="user_type"
             value={formData.user_type}
             onChange={handleChange}
             required
+            className={cx("input")}
           >
-            <option value="">Chọn loại người dùng</option>
-            <option value="candidate">Tìm việc</option>
-            <option value="employer">Nhà tuyển dụng</option>
+            <option value="candidate">Job applicant</option>
+            <option value="employer">Employer</option>
           </select>
         </div>
-        <div>
-          <label htmlFor="address">Địa chỉ:</label>
+        <div className={cx("formitem")}>
+          <label htmlFor="address"  className={cx("name")}>Address:</label>
           <textarea
             id="address"
             name="address"
             value={formData.address}
             onChange={handleChange}
             required
+            className={cx("input")}
           ></textarea>
         </div>
-        <button type="submit">Đăng ký</button>
+        <Button type="submit" className={cx("primary-btn")}>Đăng ký</Button>
       </form>
     </div>
   );
