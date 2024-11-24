@@ -20,6 +20,7 @@ class PostJobController extends Controller
                             $validated['image'] = 'uploads/' . $imageName;
                         }
 
+
      
 
         // Save data to the database
@@ -39,12 +40,14 @@ class PostJobController extends Controller
             'jobs' => $jobs
         ], 200);
     }
-    public function show($id)
+    public function show($job_id)
     {
-        $job = PostJob::where('job_id' ,$id)->get();
+
+        $job = PostJob::where('job_id',$job_id)->get();
 
         if (!$job) {
             return response()->json([
+                'success' => false,
                 'message' => 'Job not found'
             ], 404);
         }
@@ -179,4 +182,5 @@ class PostJobController extends Controller
             // Trả về dữ liệu dưới dạng JSON
             return response()->json($jobs);
         }
+
 }

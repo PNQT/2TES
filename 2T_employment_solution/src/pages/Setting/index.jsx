@@ -303,7 +303,6 @@ function Setting() {
           {error && <p style={{ color: 'red' }}>{error}</p>}
         </form>
       </Modal>
-
       <Modal
         isOpen={deleteModalIsOpen}
         onRequestClose={closeDeleteModal}

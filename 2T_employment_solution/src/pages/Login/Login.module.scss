@@ -1,3 +1,126 @@
-.wrapper{
-    background-color: antiquewhite;
+.container {
+  width: 521px;
+  padding: 24px;
+  border-radius: 30px;
+  background-color: white;
+  margin: auto;
+
+  .htitle {
+    font-size: 30px;
+    line-height: 48px;
+    color: #0c2577;
+
+    &decr {
+      box-sizing: border-box;
+      margin: 0px;
+      min-width: 0px;
+      font-size: 16px;
+      line-height: 24px;
+      font-family: "Relative Pro", Arial, sans-serif;
+      font-weight: 350;
+      color: rgb(12, 37, 119);
+      padding-top: -5px;
+      padding-bottom: 8px;
+    }
+  }
+  .form {
+    box-sizing: border-box;
+    margin: 0px;
+    min-width: 0px;
+    display: flex;
+    flex-flow: column;
+    position: relative;
+
+    &comp {
+      box-sizing: border-box;
+      margin: 0px 0px 24px;
+      min-width: 0px;
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      margin: 0px 0px 24px;
+
+      label {
+        box-sizing: border-box;
+        margin: 0px 0px 8px;
+        min-width: 0px;
+        font-size: 16px;
+        line-height: 24px;
+        font-family: "Relative Pro", Arial, sans-serif;
+        font-weight: 700;
+        color: rgb(12, 37, 119);
+        display: block;
+        text-align: start;
+        cursor: pointer;
+      }
+      .input {
+        margin: 0px 0px 8px;
+        box-sizing: border-box;
+        margin: 0px;
+        min-width: 0px;
+        font-size: 16px;
+        line-height: 24px;
+        font-family: "Relative Pro", Arial, sans-serif;
+        font-weight: 350;
+        color: rgb(12, 37, 119);
+        appearance: none;
+        background: transparent;
+        box-shadow: none;
+        display: block;
+        outline: none;
+        padding: 8px 16px;
+        resize: none;
+        width: 100%;
+        cursor: auto;
+        border: none;
+        min-height: 40px;
+        border-radius: 20px;
+        border: 1px solid rgb(12, 37, 119);
+
+        .icon {
+          position: absolute;
+          right: 20px;
+          top: 44px;
+
+          color: rgb(12, 37, 119);
+        }
+      }
+    }
+
+    &forget {
+      margin-top: -8px;
+      margin-left: 330px;
+      color: blue;
+    }
+  }
+  .primary-btn {
+    color: white;
+    padding: 16px;
+    border-radius: 15px;
+    height: 38px;
+    margin-top: 8px;
+    font-size: 16px;
+  }
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin: 0px 0px 16px;
+}
+.botgroup {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+.group {
+  display: flex;
+  flex-direction: row;
+  margin-top: 23px;
+  font-size: 16px;
+
+  .link {
+    color: #008194;
+  }
 }

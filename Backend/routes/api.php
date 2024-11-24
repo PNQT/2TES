@@ -7,6 +7,9 @@ use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SavedJobController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();    
@@ -39,6 +42,7 @@ Route::delete('/saved_job', [SavedJobController::class, 'destroy']);
 Route::middleware('auth:sanctum')->post('/jobs/YourSaved', [SavedJobController::class, 'getSavedJobs']);
 
 
+
 // Route::get('/register', [RegisterController::class, 'index']);
 
 // Route::post('/register', [RegisterController::class, 'signup']);
@@ -62,6 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/avatar', [ProfileController::class, 'updateAvatar']);
     Route::post( '/user/profile', [ProfileController::class, 'informationUpdate']); 
     Route::post('/user/changePassword', [AuthController::class, 'changePassword']);  
+
 });
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -70,3 +75,25 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 Route::post('/password/email', [ResetPasswordController::class, 'sendResetLinkEmail']);  // Route gửi email
 Route::post('/password/reset', [ResetPasswordController::class, 'resetPassword']); 
+Route::post('/logout', action: [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'getAuthenticatedUser']);
+
+// Route::get('/notifiactionall',[NotificationController::class, 'getAllApplications']);
+Route::get('/notifiaction/{id}',[NotificationController::class, 'getApplicationById']); 
+
+
+Route::get('/user/{id}', [UserController::class, 'getUserById']);
+
+
+  
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/applications', [ApplicationController::class, 'store']);
+    Route::get('/notifications', [ApplicationController::class, 'getNotifications']);
+    Route::get('/applications', [ApplicationController::class, 'index']);
+
+    
+});
+
+Route::put('/notifications/{job_id}/{poster_id}/read', [NotificationController::class, 'markAsRead']);
+Route::get('/notifications/{application_id}', [NotificationController::class, 'getUnreadNotifications']);

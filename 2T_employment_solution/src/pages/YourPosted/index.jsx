@@ -264,6 +264,7 @@ function YourPosted() {
       </Modal>
     </div>
   );
+
 }
 
 export default YourPosted;

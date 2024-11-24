@@ -66,7 +66,7 @@ function Profile() {
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatarPreview(reader.result); // Update avatar preview
+        setAvatarPreview(reader.result); 
       };
       reader.readAsDataURL(file);
     } else {
@@ -135,8 +135,7 @@ function Profile() {
           address: data.user.address,
           bio: data.user.bio,
         }));
-        console.log(user);
-        
+        console.log(user);      
         closeModal();
       } else {
         alert("Thay đổi thông tin thất bại!");

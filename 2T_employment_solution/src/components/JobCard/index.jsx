@@ -116,6 +116,7 @@ function JobCard({
             </div>
             <div className={cx("address")} onClick={() => handleClickDetails('address')}>
               {address}
+
             </div>
           </div>
         </div>
@@ -255,9 +256,10 @@ function JobCard({
             Close
           </Button>
         </div>
-      </Modal>
-    </div>
+    </Modal>
+   </div>
   );
+
 }
 
 export default JobCard;

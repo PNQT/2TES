@@ -14,6 +14,7 @@ import routesConfig from "~/config/routes"
 import YourPosted from '~/pages/YourPosted';
 import YourSaved from '~/pages/YourSaved';
 
+
 const publicRoutes = [
   { path: routesConfig.home, component: Home, layout: DefaultLayout },
   { path: routesConfig.categories, component: Category, layout: DefaultLayout },
@@ -28,6 +29,7 @@ const publicRoutes = [
   { path: routesConfig.sendemail, component: SendEmail, layout: DefaultLayout},
   { path: routesConfig.yourposted, component: YourPosted, layout: DefaultLayout},
   { path: routesConfig.yoursaved, component: YourSaved, layout: DefaultLayout}
+
 
 ];
 

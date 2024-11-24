@@ -13,6 +13,7 @@ const routes = {
     sendemail: '/sendemail',
     yourposted: '/yourposted',
     yoursaved: '/yoursaved',
+
 }
 export default routes;
 
