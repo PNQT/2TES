@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const Register = () => {
   // State quản lý dữ liệu form
   const [formData, setFormData] = useState({
-    name: '',
+    user_name: '',
     email: '',
     password: '',
     password_confirmation: '',
@@ -39,7 +39,7 @@ const Register = () => {
   // Hàm kiểm tra tính hợp lệ của form trước khi gửi
   const validateForm = () => {
     const validationErrors = [];
-    if (!formData.name) validationErrors.push('Tên là bắt buộc');
+    if (!formData.user_name) validationErrors.push('Tên là bắt buộc');
     if (!formData.email) validationErrors.push('Email là bắt buộc');
     if (!formData.password) validationErrors.push('Mật khẩu là bắt buộc');
     if (formData.password !== formData.password_confirmation)
@@ -68,7 +68,7 @@ const Register = () => {
       setSuccessMessage('Tạo tài khoản thành công!');
       
       setFormData({
-        name: '',
+        user_name: '',
         email: '',
         password: '',
         password_confirmation: '',
@@ -128,8 +128,8 @@ const Register = () => {
           <label htmlFor="user_name">Tên:</label>
           <input
             type="text"
-            id="name"
-            name="name"
+            id="user_name"
+            name="user_name"
             value={formData.user_name}
             onChange={handleChange}
             required

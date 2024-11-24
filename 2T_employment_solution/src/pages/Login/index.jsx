@@ -86,6 +86,12 @@ export default function Login() {
         {errors.general && <p className="error">{errors.general[0]}</p>}
 
         <button className="primary-btn">Login</button>
+        <div>
+        <a href="/register">Đăng ký tài khoản</a>
+         </div>
+         <div>
+         <a href="/sendemail">Quên mật khẩu</a>   
+         </div>
       </form>
     </>
   );

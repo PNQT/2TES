@@ -39,7 +39,7 @@ import facebook from './facebook.svg';
 import instagram from './instagram.svg';
 import linkedin from './linkedln.svg';
 import tele from './tinder.svg';
-
+import saved from './saved.svg';
 
 const icons = {
   account,
@@ -72,6 +72,7 @@ const icons = {
   shipper,
   instar,
   save,
+  saved,
   arrow_left1,
   yahoo,
   microsoft,

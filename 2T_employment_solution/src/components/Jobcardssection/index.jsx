@@ -1,6 +1,6 @@
 import classNames from "classnames/bind";
 import styles from "./JobCardSection.module.scss";
-import JobCard from "~/components/JobCard";
+import JobCardFake from "~/components/JobCardFake";
 import Button from "~/components/Button";
 import Image from "~/components/Image";
 import icons from "~/assets/icons";
@@ -25,7 +25,7 @@ function JobCardSection() {
                 <div className=""></div>
             </div>
             <div className={cx("groupCard")}>
-                <JobCard 
+                <JobCardFake 
                     className={cx("groupCardItem")}
                     src={icons.instar}
                     name="Company Name"
@@ -38,7 +38,7 @@ function JobCardSection() {
                     Heloo Hole lele lolo dfsafjhasdfjkahdfjaskfh sadfhasdjfhasdfjkh sd
                     Heloo Hole lele lolo dfsafjhasdfjkahdfjaskfh sadfhasdjfhasdfjkh sdhfjasdfsajdfh hjlhjklili lala lulu kaka kikihfjasdfsajdfh hjlhjklili lala lulu kaka kikii"
                 /> 
-                <JobCard 
+                <JobCardFake 
                     className={cx("groupCardItem")}
                     src={icons.instar}
                     name="Company Name"
@@ -49,7 +49,7 @@ function JobCardSection() {
                     shortdecr3="Short Description"
                     decription="Heloo Hole lele lolo lili lala lulu kaka kiki"
                 />         
-                <JobCard 
+                <JobCardFake 
                     className={cx("groupCardItem")}
                     src={icons.instar}
                     name="Company Name"
@@ -60,7 +60,7 @@ function JobCardSection() {
                     shortdecr3="Short Description"
                     decription="Heloo Hole lele lolo lili lala lulu kaka kiki"
                 />         
-                <JobCard 
+                <JobCardFake 
                     className={cx("groupCardItem")}
                     src={icons.instar}
                     name="Company Name"
@@ -71,7 +71,7 @@ function JobCardSection() {
                     shortdecr3="Short Description"
                     decription="Heloo Hole lele lolo lili lala lulu kaka kiki"
                 />         
-                <JobCard 
+                <JobCardFake
                     className={cx("groupCardItem")}
                     src={icons.instar}
                     name="Company Name"
@@ -82,7 +82,7 @@ function JobCardSection() {
                     shortdecr3="Short Description"
                     decription="Heloo Hole lele lolo lili lala lulu kaka kiki"
                 />         
-                <JobCard 
+                <JobCardFake 
                     className={cx("groupCardItem")}
                     src={icons.instar}
                     name="Company Name"

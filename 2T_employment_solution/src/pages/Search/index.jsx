@@ -6,6 +6,8 @@ import styles from "./Search.module.scss";
 import { useEffect, useState } from "react";
 import Search from "~/components/Search";
 import JobCard from "~/components/JobCard";
+import { AppContext } from "~/Context/AppContext";
+import { useContext } from "react";
 
 const cx = classNames.bind(styles);
 Modal.setAppElement('#root');
@@ -20,6 +22,11 @@ function SearchResults() {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const query = useQuery();
     const searchValue = query.get('query');
+    
+    // Lấy user và token từ context hoặc localStorage
+    const { user, token } = useContext(AppContext); // Nếu bạn dùng Context API
+    // const user = JSON.parse(localStorage.getItem('user')) || null; // Nếu lưu trữ trong localStorage
+    // const token = localStorage.getItem('token') || null;
 
     const openModal = (job) => {
         setSelectedJob(job);
@@ -37,6 +44,12 @@ function SearchResults() {
             return;
         }
 
+        if (!user || !token) {
+            // Nếu không có user hoặc token, không gọi API và có thể thông báo cho người dùng
+            console.log("No user or token found, cannot fetch search results.");
+            return;
+        }
+
         const fetchApi = async () => {
             try {
                 const result = await searchServices.search(searchValue);
@@ -46,7 +59,7 @@ function SearchResults() {
             }
         };
         fetchApi();
-    }, [searchValue]);
+    }, [searchValue, user, token]); // Khi searchValue, user hoặc token thay đổi
 
     return (
         <div className={cx("searchResults")}>
@@ -54,17 +67,21 @@ function SearchResults() {
             <div className={cx("groupCard")}>
                 {searchResult.length > 0 ? (
                     searchResult.map((job) => (
-                        <div key={job.id} className={cx("cardItem")}>
+                        <div key={job.job_id} className={cx("cardItem")}>
                             <JobCard 
+                                key={job.job_id}
                                 src={`http://localhost:8000/${job.image}`}
                                 name={job.title}
                                 address={job.location}
-                                position={job.benefits}
-                                shortdecr1={job.employmentType}
+                                position={job.company_name}
+                                shortdecr1={job.job_type}
                                 shortdecr2={job.salary}
-                                shortdecr3={job.deadline}
-                                description={job.description}
-                                onClick={() => openModal(job)}
+                                shortdecr3={job.created_at}
+                                decription={job.description}
+                                details={job} // Truyền dữ liệu chi tiết
+                                job_id={job.job_id}
+                                user={user} // Truyền user vào JobCard
+                                token={token} // Truyền token vào JobCard
                             />
                         </div>
                     ))
@@ -72,34 +89,8 @@ function SearchResults() {
                     <p>No results found</p>
                 )}
             </div>  
-            <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeModal}
-                contentLabel="Job Details"
-                className={cx("modal")}
-                overlayClassName={cx("overlay")}
-            >
-                {selectedJob && (
-                    <div>
-                        <h1>Binnnnnnnnn</h1>
-                        <h2>{selectedJob.title}</h2>
-                        <p>{selectedJob.description}</p>
-                        <p><strong>Requirements:</strong> {selectedJob.requirements}</p>
-                        <p><strong>Benefits:</strong> {selectedJob.benefits}</p>
-                        <p><strong>Company Info:</strong> {selectedJob.companyInfo}</p>
-                        <p><strong>Location:</strong> {selectedJob.location}</p>
-                        <p><strong>Employment Type:</strong> {selectedJob.employmentType}</p>
-                        <p><strong>Salary:</strong> {selectedJob.salary}</p>
-                        <p><strong>Deadline:</strong> {selectedJob.deadline}</p>
-                        <p><strong>Contact Email:</strong> {selectedJob.contactEmail}</p>
-                        <p><strong>Contact Phone:</strong> {selectedJob.contactPhone}</p>
-                        <p><strong>Application Process:</strong> {selectedJob.applicationProcess}</p>
-                        <button onClick={closeModal}>Close</button>
-                    </div>
-                )}
-            </Modal>
         </div>
-    );                                                                                                                                              
+    );
 }
 
-export default SearchResults;                                                                                     
+export default SearchResults;

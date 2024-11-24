@@ -1,27 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import styles from './PostJob.module.scss';
 import classNames from 'classnames/bind';
 import axios from 'axios';
 import Button from "~/components/Button";
+import { AppContext } from '~/Context/AppContext'; // Import AppContext
 
 const cx = classNames.bind(styles);
 
 function PostJob() {
+  const { user, token } = useContext(AppContext); // Access user and token from AppContext
   const [formData, setFormData] = useState({
+    employer_id: '0',// Set employer_id to the user's ID if user is logged in
     title: '',
     description: '',
     requirements: '',
-    benefits: '',
-    companyInfo: '',
+    company_name: '',
     location: '',
-    employmentType: 'full-time',
+    job_type: 'full_time',
     salary: '',
-    deadline: '',
-    contactEmail: '',
-    contactPhone: '',
-    applicationProcess: '',
-    image: null  // New field for image file
+    created_at: '',
+    contact_email: '',
+    contact_phone: '',
+    image: null
   });
+
+  const [isEmployer, setIsEmployer] = useState(true); // Flag to track if user is an employer
+  const [errorMessage, setErrorMessage] = useState(''); // Error message for unauthorized users
+
+  // Check if the user is an employer
+  useEffect(() => {
+    if (user && user.user_type !== 'employer') {
+      setIsEmployer(false);
+      setErrorMessage('You are not authorized to post a job. Please log in as an employer.');
+    }
+  }, [user]);
+
+  // Update the employer_id in the form data when the user changes
+  useEffect(() => { 
+    if (user && user.user_type === 'employer') {
+      setFormData({ ...formData, employer_id: user.user_id });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,6 +54,12 @@ function PostJob() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate that the user is an employer before submitting the job posting
+    if (!isEmployer) {
+      setErrorMessage('You are not authorized to post a job.');
+      return;
+    }
 
     const data = new FormData();
     // Append all form fields to FormData, including the file input
@@ -66,18 +91,17 @@ function PostJob() {
       console.log('Job posted successfully:', response.data);
       // Optionally reset form data after successful submission
       setFormData({
+        employer_id: user.user_id,
         title: '',
-        description: '',
+description: '',
         requirements: '',
-        benefits: '',
-        companyInfo: '',
+        company_name: '',
         location: '',
-        employmentType: 'full-time',
+        job_type: 'full-time',
         salary: '',
-        deadline: '',
-        contactEmail: '',
-        contactPhone: '',
-        applicationProcess: '',
+        created_at: '',
+        contact_email: '',
+        contact_phone: '',
         image: null
       });
 
@@ -89,149 +113,134 @@ function PostJob() {
   return (
     <div className={cx("form-container")}>
       <h2 className={cx("title")}>Job Posting Form</h2>
-      <form onSubmit={handleSubmit}>
-        <label   className={cx("jobTitle")}>
-          Job Title:
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-        </label>
+      {!isEmployer && (
+        <div className={cx("error-message")}>
+          {errorMessage}
+        </div>
+      )}
+      {isEmployer && (
+        <form onSubmit={handleSubmit}>
+          <label className={cx("jobTitle")}>
+            Job Title:
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+            />
+          </label>
 
-        <label className={cx("description")}>
-          Job Description:
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-        </label>
+          <label className={cx("description")}>
+            Job Description:
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+            />
+          </label>
 
-        <label>
-          Requirements:
-          <textarea
-            name="requirements"
-            value={formData.requirements}
-            onChange={handleChange}
-          />
-        </label>
+          <label>
+            Requirements:
+            <textarea
+              name="requirements"
+              value={formData.requirements}
+              onChange={handleChange}
+            />
+          </label>
 
-        <label>
-          Benefits:
-          <textarea
-            name="benefits"
-            value={formData.benefits}
-            onChange={handleChange}
-          />
-        </label>
+          <label>
+            Company Information:
+            <textarea
+              name="company_name"
+              value={formData.company_name}
+              onChange={handleChange}
+            />
+          </label>
 
-        <label>
-          Company Information:
-          <textarea
-            name="companyInfo"
-            value={formData.companyInfo}
-            onChange={handleChange}
-          />
-        </label>
+          <label>
+            Location:
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+            />
+          </label>
 
-        <label>
-          Location:
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-          />
-        </label>
+          <label>
+            Employment Type:
+            <select
+              name="job_type"
+              value={formData.job_type}
+              onChange={handleChange}
+            >
+              <option value="full_time">Full-Time</option>
+              <option value="part_time">Part-Time</option>
+              <option value="internship">Internship</option>
+              
+            </select>
+          </label>
 
-        <label>
-          Employment Type:
-          <select
-            name="employmentType"
-            value={formData.employmentType}
-            onChange={handleChange}
-          >
-            <option value="full-time">Full-Time</option>
-            <option value="part-time">Part-Time</option>
-            <option value="internship">Internship</option>
-            <option value="remote">Remote</option>
-            <option value="temporary">Temporary</option>
-            <option value="contract">Contract</option>
-            <option value="freelance">Freelance</option>
-            <option value="apprenticeship">Apprenticeship</option>
-          </select>
-        </label>
+          <label>
+            Salary:
+            <input
+              type="number"
+              name="salary"
+              value={formData.salary}
+              onChange={handleChange}
+            />
+          </label>
 
-        <label>
-          Salary:
-          <input
-            type="number"
-            name="salary"
-            value={formData.salary}
-            onChange={handleChange}
-          />
-        </label>
+          <label>
+            Posted at:
+            <input
+              type="date"
+              name="created_at"
+              value={formData.created_at}
+              onChange={handleChange}
+            />
+          </label>
 
-        <label>
-          Application Deadline:
-          <input
-            type="date"
-            name="deadline"
-            value={formData.deadline}
-            onChange={handleChange}
-          />
-        </label>
+          <label>
+            Contact Email:
+            <input
+              type="email"
+              name="contact_email"
+              value={formData.contactEmail}
+              onChange={handleChange}
+              required
+/>
+          </label>
 
-        <label>
-          Contact Email:
-          <input
-            type="email"
-            name="contactEmail"
-            value={formData.contactEmail}
-            onChange={handleChange}
-            required
-          />
-        </label>
+          <label>
+            Contact Phone:
+            <input
+              type="tel"
+              name="contact_phone"
+              value={formData.contactPhone}
+              onChange={handleChange}
+            />
+          </label>
 
-        <label>
-          Contact Phone:
-          <input
-            type="tel"
-            name="contactPhone"
-            value={formData.contactPhone}
-            onChange={handleChange}
-          />
-        </label>
+          {/* New field for image upload */}
+          <label>
+            Company Logo or Image:
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+          </label>
 
-        <label>
-          Application Process:
-          <textarea
-            name="applicationProcess"
-            value={formData.applicationProcess}
-            onChange={handleChange}
-          />
-        </label>
-
-        {/* New field for image upload */}
-        <label>
-          Company Logo or Image:
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-        </label>
-
-       <div className={cx("groupbutton")}>
-          <Button type="submit">Submit</Button>
-          <Button className={cx("btnCancel")} outline>Cancel</Button>
-       </div>
-      </form>
+          <div className={cx("groupbutton")}>
+            <Button type="submit">Submit</Button>
+            <Button className={cx("btnCancel")} outline>Cancel</Button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

@@ -39,7 +39,7 @@ class ResetPasswordController extends Controller
                 }
         
                 $otp = rand(100000, 999999);
-                $hashedOtp = Hash::make($otp);
+                // $hashedOtp = Hash::make($otp);
         
                 DB::table('password_resets')
                     ->where('email', $user->email)
@@ -47,7 +47,7 @@ class ResetPasswordController extends Controller
         
                 DB::table('password_resets')->insert([
                     'email' => $user->email,
-                    'token' => $hashedOtp, 
+                    'token' => $otp, 
                     'created_at' => now(),
                 ]);
         
@@ -67,7 +67,7 @@ class ResetPasswordController extends Controller
                     ->where('email', $validatedData['email'])
                     ->first();
         
-                if (!$resetRecord || !Hash::check($validatedData['otp'], $resetRecord->token)) {
+                if (!$resetRecord || ($validatedData['otp']!= $resetRecord->token)) {
                     return response()->json(['message' => 'OTP không hợp lệ hoặc đã hết hạn'], 400);
                 }
         

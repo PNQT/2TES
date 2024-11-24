@@ -10,6 +10,8 @@ class PostJob extends Model
 { 
     use HasFactory;
     protected $table = 'jobs';
+
+ 
     protected $fillable = [
         // 'job_id',
         // 'description',

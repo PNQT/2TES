@@ -11,6 +11,8 @@ const routes = {
     login: '/login',
     resetpassword: '/resetpassword',
     sendemail: '/sendemail',
+    yourposted: '/yourposted',
+    yoursaved: '/yoursaved',
 }
 export default routes;
 
