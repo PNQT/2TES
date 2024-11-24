@@ -5,6 +5,8 @@ use App\Http\Requests\StorePostJobRequest;
 use App\Models\Job;
 use App\Models\PostJob;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class PostJobController extends Controller
 {
@@ -16,7 +18,8 @@ class PostJobController extends Controller
                             $imageName = time() . '.' . $request->image->extension();
                             $request->image->move(public_path('uploads'), $imageName);
                             $validated['image'] = 'uploads/' . $imageName;
-        }
+                        }
+
 
      
 
@@ -39,6 +42,7 @@ class PostJobController extends Controller
     }
     public function show($job_id)
     {
+
         $job = PostJob::where('job_id',$job_id)->get();
 
         if (!$job) {
@@ -52,49 +56,77 @@ class PostJobController extends Controller
             'job' => $job
         ], 200);
     }
-    public function update(StorePostJobRequest $request, $id)
-    {
-        // Retrieve the validated input data
-        $validated = $request->validated();
+//     public function update(Request $request , $id)
+// {
+  
+//     // Kiểm tra ID có hợp lệ không
+//     if (!$id) {
+//         return response()->json(['error' => 'Invalid ID provided'], 400);
+//     }
+//     $validated = $request->validated();
+//     // Tìm công việc theo ID
+//     $job = PostJob::where('job_id', $id)->first();
 
-        $job = PostJob::find($id);
+//     if (!$job) {
+//         return response()->json(['error' => 'Job not found'], 404);
+//     }
 
+//     // Cập nhật dữ liệu từ request
+//     $job->title = $validated->input('title', $job->title);
+//     $job->description = $validated->input('description', $job->description);
+//     $job->requirements = $validated->input('requirements', $job->requirements);
+//     $job->company_name = $validated->input('company_name', $job->company_name);
+//     $job->location = $validated->input('location', $job->location);
+//     $job->job_type = $validated->input('job_type', $job->job_type);
+//     $job->salary = $validated->input('salary', $job->salary);
+//     $job->contact_email = $validated->input('contact_email', $job->contact_email);
+//     $job->contact_phone = $validated->input('contact_phone', $job->contact_phone);
+
+//     // Kiểm tra nếu có file ảnh trong validated
+//     if ($validated->hasFile('image')) {
+//         // Xóa ảnh cũ nếu có
+//         if ($job->image && Storage::exists('public/' . $job->image)) {
+//             Storage::delete('public/' . $job->image);
+//         }
+
+//         // Lưu ảnh mới vào thư mục 'uploads' và lấy đường dẫn
+//         $imageName = time() . '.' . $validated->image->extension(); // Tạo tên file ảnh mới
+//         $validated->image->move(public_path('uploads'), $imageName); // Di chuyển ảnh vào thư mục public/uploads
+//         $job->image = 'uploads/' . $imageName; // Lưu đường dẫn ảnh vào CSDL
+//     }
+
+//     Log::info('Job updated', ['job' => $job]);
+
+//     // Lưu thay đổi
+//     $job->save();
+
+//     // Trả về phản hồi thành công
+//     return response()->json(['message' => 'Job updated successfully!', 'job' => $job]);
+// }
+
+    
+    public function update ( Request $request, $id){
+        $job = PostJob::where('job_id',$id);
         if (!$job) {
-            return response()->json([
-                'message' => 'Job not found'
-            ], 404);
+            return response()->json(['error' => 'Job not found'], 404);
         }
-
-        if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads'), $imageName);
-            $validated['image'] = 'uploads/' . $imageName;
-        }
-
-        // Update the job
-        $job->update($validated);
-
-        return response()->json([
-            'message' => 'Job updated successfully',
-            'job' => $job
-        ], 200);
+        $job->update($request->all());
+        return response()->json($job);
     }
+
     public function destroy($id)
-    {
-        $job = PostJob::find($id);
+        {
+            $job = PostJob::where('job_id', $id);
 
-        if (!$job) {
-            return response()->json([
-                'message' => 'Job not found'
-            ], 404);
+            if (!$job) {
+                return response()->json(['error' => 'Job not found'], 404);
+            }
+
+            // Xóa công việc
+            $job->delete();
+
+            return response()->json(['message' => 'Job deleted successfully!']);
         }
-
-        $job->delete();
-
-        return response()->json([
-            'message' => 'Job deleted successfully'
-        ], 200);
-    }
 
     public function search(Request $request)
     {
@@ -140,4 +172,15 @@ class PostJobController extends Controller
         // Trả về danh sách công việc
         return response()->json($jobs);
     }
+
+    
+        public function getAllJobs()
+        {
+            // Lấy tất cả các công việc
+            $jobs = PostJob::all();
+
+            // Trả về dữ liệu dưới dạng JSON
+            return response()->json($jobs);
+        }
+
 }

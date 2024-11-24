@@ -11,6 +11,7 @@ class PostJob extends Model
     use HasFactory;
     protected $table = 'jobs';
 
+
     // protected $primaryKey = ['job_id'];
     protected $fillable = [
         // 'job_id',

@@ -35,7 +35,7 @@ class StorePostJobRequest extends FormRequest
             // 'contactPhone' => 'nullable|string',
             // 'applicationProcess' => 'nullable|string',
             // 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'employer_id' => 'required|numeric',
+           'employer_id' => 'required|numeric',
             'title' => 'required|string|max:255',
             'company_name' => 'required|string',
             'description' => 'required|string',

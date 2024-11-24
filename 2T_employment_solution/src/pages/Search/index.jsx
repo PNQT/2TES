@@ -6,6 +6,8 @@ import * as searchServices from "~/apiServices/searchService";
 import styles from "./Search.module.scss";
 import Search from "~/components/Search";
 import JobCard from "~/components/JobCard";
+import { AppContext } from "~/Context/AppContext";
+import { useContext } from "react";
 import Button from "~/components/Button";
 import axios from "axios";
 import { IoReturnDownBackOutline } from "react-icons/io5";
@@ -281,6 +283,55 @@ function SearchResults() {
                 <Button className={cx("Button")} onClick={() => dispatch({ type: "NEXT" })}>Next</Button>
               </div>
             )}
+
+
+//         if (!user || !token) {
+//             // Nếu không có user hoặc token, không gọi API và có thể thông báo cho người dùng
+//             console.log("No user or token found, cannot fetch search results.");
+//             return;
+//         }
+
+//         const fetchApi = async () => {
+//             try {
+//                 const result = await searchServices.search(searchValue);
+//                 setSearchResult(result);
+//             } catch (error) {
+//                 console.error('Error fetching search results:', error);
+//             }
+//         };
+//         fetchApi();
+//     }, [searchValue, user, token]); // Khi searchValue, user hoặc token thay đổi
+
+//     return (
+//         <div className={cx("searchResults")}>
+//             <div className={cx("left")}><Search /></div>
+//             <div className={cx("groupCard")}>
+//                 {searchResult.length > 0 ? (
+//                     searchResult.map((job) => (
+//                         <div key={job.job_id} className={cx("cardItem")}>
+//                             <JobCard 
+//                                 key={job.job_id}
+//                                 src={`http://localhost:8000/${job.image}`}
+//                                 name={job.title}
+//                                 address={job.location}
+//                                 position={job.company_name}
+//                                 shortdecr1={job.job_type}
+//                                 shortdecr2={job.salary}
+//                                 shortdecr3={job.created_at}
+//                                 decription={job.description}
+//                                 details={job} // Truyền dữ liệu chi tiết
+//                                 job_id={job.job_id}
+//                                 user={user} // Truyền user vào JobCard
+//                                 token={token} // Truyền token vào JobCard
+//                             />
+//                         </div>
+//                     ))
+//                 ) : (
+//                     <p>No results found</p>
+//                 )}
+//             </div>  
+//         </div>
+//     );
 
             {/* Step 3: Confirm Information */}
             {stepState.step === 3 && (

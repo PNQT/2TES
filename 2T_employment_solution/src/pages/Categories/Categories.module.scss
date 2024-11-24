@@ -1,0 +1,17 @@
+.container {
+    padding: 20px;
+    background-color: #f4f4f4;
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Job card layout */
+  .jobs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }

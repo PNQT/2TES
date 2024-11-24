@@ -114,6 +114,7 @@ export default function Login() {
         {/* Display general error */}
         {errors.general && <p className={cx("error")}>{errors.general[0]}</p>}
 
+
         <Button className={cx("primary-btn")}>Log in</Button>
 
         <div className={cx("botgroup")}>

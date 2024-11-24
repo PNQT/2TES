@@ -6,6 +6,7 @@ use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SavedJobController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\NotificationController;
@@ -14,19 +15,32 @@ Route::get('/user', function (Request $request) {
     return $request->user();    
 })->middleware('auth:sanctum'); 
 
+Route::get('/joball', [PostJobController::class, 'getAllJobs']);
+
 Route::get('/search',  [PostJobController::class, 'search']);
 
 Route::get('/jobs', [PostJobController::class, 'index']);
 
 Route::post('/jobs', [PostJobController::class, 'store']);
 
-Route::get('/jobs/{id}', [PostJobController::class, 'show']);
+// Route::get('/jobs/{id}', [PostJobController::class, 'show']);
 
-Route::put('/jobs/{id}', [PostJobController::class, 'update']);
+Route::post('/jobedit/{id}', [PostJobController::class, 'update']);
 
 Route::delete('/jobs/{id}', [PostJobController::class, 'destroy']);
 
 Route::post('/jobs/YourPosted', [PostJobController::class, 'getUserPostedJobs']);
+
+
+
+ Route::post('/jobdelete/{id}', [PostJobController::class, 'destroy']);
+
+
+Route::get('/saved_job/check', [SavedJobController::class, 'check']);
+Route::post('/saved_job', [SavedJobController::class, 'store']);
+Route::delete('/saved_job', [SavedJobController::class, 'destroy']);
+Route::middleware('auth:sanctum')->post('/jobs/YourSaved', [SavedJobController::class, 'getSavedJobs']);
+
 
 
 // Route::get('/register', [RegisterController::class, 'index']);
@@ -57,6 +71,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::post('/password/email', [ResetPasswordController::class, 'sendResetLinkEmail']);  // Route gửi email
+Route::post('/password/reset', [ResetPasswordController::class, 'resetPassword']); 
 Route::post('/logout', action: [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'getAuthenticatedUser']);
 

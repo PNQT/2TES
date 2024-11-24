@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import classNames from "classnames/bind";
 import { Link } from "react-router-dom";
 import Tippy from '@tippyjs/react';
-import { FaUser, FaCog, FaSignOutAlt, FaBars, FaSave, FaPassport } from 'react-icons/fa'; // Import icons
+import { FaUser, FaCog, FaSignOutAlt, FaBars, FaPodcast, FaPassport, FaSave } from 'react-icons/fa'; // Import icons
+
 
 import styles from "./Header.module.scss";
 import Button from "~/components/Button";
@@ -82,13 +83,20 @@ function Header() {
                 <FaUser className={cx('icon')} />
                 Profile
             </Link>
-            {user && user.user_type === 'employer' ? (
-            <Link to={routesConfig.yourposted} className={cx('menuItem')} onClick={handleClick}>
-                <FaPassport className={cx('icon')} />
-                Your posted 
-            </Link>
+        {user && user.user_type === 'employer' ? (
+            <>
+                <Link to={routesConfig.yourposted} className={cx('menuItem')} onClick={handleClick}>
+                    <FaPassport className={cx('icon')} />
+                    Your posted 
+                </Link>
+                <Link to={routesConfig.yoursaved} className={cx('menuItem')} onClick={handleClick}>
+                    <FaSave className={cx('icon')} />
+                    Your saved 
+                </Link>
+            </>
         ) : (
-            <Link to={routesConfig.apply} className={cx('menuItem')} onClick={handleClick}>
+            <Link to={routesConfig.yoursaved} className={cx('menuItem')} onClick={handleClick}>
+
                 <FaSave className={cx('icon')} />
                 Your saved 
             </Link>
