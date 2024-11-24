@@ -16,7 +16,7 @@ class PostJobController extends Controller
                             $imageName = time() . '.' . $request->image->extension();
                             $request->image->move(public_path('uploads'), $imageName);
                             $validated['image'] = 'uploads/' . $imageName;
-                        }
+        }
 
      
 

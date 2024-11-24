@@ -21,7 +21,7 @@ class Application extends Model
         'applicant_id',
         'poster_id',
         'cover_letter',
-        'resume',
+        'resume_path',
         'status',
         'applied_at',
     ];

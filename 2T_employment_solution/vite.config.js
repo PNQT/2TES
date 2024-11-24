@@ -8,4 +8,9 @@ export default defineConfig({
       '~': "/src",
     },
   },
+  server: {
+    proxy: {
+      '/uploads': '*'
+    }
+  }
 });

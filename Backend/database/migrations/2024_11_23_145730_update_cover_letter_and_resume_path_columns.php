@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        //
         Schema::table('applications', function (Blueprint $table) {
-            $table->foreignId(('poster_id'))->constrained('users', column: 'user_id')->cascadeOnDelete()->restrictOnUpdate();
+        $table->string('cover_letter', 255)->nullable()->change(); // Đổi thành VARCHAR(255)
+        $table->text('resume_path')->nullable()->change(); // Đổi thành TEXT
         });
     }
 
@@ -22,7 +24,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('applications', function (Blueprint $table) {
-            //
+            $table->text('cover_letter')->nullable()->change(); // Hoàn tác về TEXT (hoặc kiểu cũ nếu khác)
+            $table->string('resume_path', 255)->nullable()->change(); // Hoàn tác về VARCHAR(255) (hoặc kiểu cũ)
         });
     }
 };

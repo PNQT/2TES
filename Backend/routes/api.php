@@ -78,3 +78,4 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::put('/notifications/{job_id}/{poster_id}/read', [NotificationController::class, 'markAsRead']);
+Route::get('/notifications/{application_id}', [NotificationController::class, 'getUnreadNotifications']);

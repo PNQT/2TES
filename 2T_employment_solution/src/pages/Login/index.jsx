@@ -2,6 +2,14 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AppContext } from "~/Context/AppContext.jsx";
+import Button from "~/components/Button";
+import { FaRegEye } from "react-icons/fa";
+import classNames from "classnames/bind";
+import styles from "./Login.module.scss";
+
+const cx = classNames.bind  (styles);
+
+
 
 export default function Login() {
   const { setToken } = useContext(AppContext); // Get setToken from AppContext
@@ -55,47 +63,70 @@ export default function Login() {
   }
 
   return (
-    <>
+    <div className={cx("container")}>
       {/* Loading Modal */}
       {loading && (
-        <div className="loading-modal">
-          <div className="loading-spinner"></div>
+        <div className={cx('loading-modal')}>
+          <div className={cx('loading-spinner')}></div>
           <p>Đang tải...</p>
         </div>
       )}
 
-      <h1 className="title">Login to your account</h1>
+      <h1 className={cx("htitle")}>Welcome Back!</h1>
 
-      <form onSubmit={handleLogin} className="w-1/2 mx-auto space-y-6">
-        <div>
+      <h4 className={cx("htitledecr")}>Log in now to find the right job with the right salary.</h4>
+
+
+      <form onSubmit={handleLogin} className={cx("form")}>
+        <div className={cx("formcomp")}>
+          <label htmlFor="email">Email address</label>
           <input
+            className={cx("input")}
             type="email"
-            placeholder="Email"
+            placeholder="Enter your email"
             value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
           />
-          {errors.email && <p className="error">{errors.email[0]}</p>}
+          {errors.email && <p className={cx("error")}>Please enter your email address in format: yourname@domain.com</p>}
+
         </div>
 
-        <div>
-          <input
-            type="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-          />
-          {errors.password && <p className="error">{errors.password[0]}</p>}
-        </div>
+        <div className={cx("formcomp")}>
+           <label htmlFor="password">Password</label>
+         <div   className={cx("input")} >
+            <input
+              type="password"
+              placeholder= "Enter your Password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              
+            />
+            <FaRegEye className={cx("icon")}  />
+         </div>
 
+          {errors.password && <p className={cx("error")}>Make sure your password contains at least 6 characters and 1 number.</p>}
+        </div>
+        <div className={cx("formforget")}>Forget password?</div>
         {/* Display general error */}
-        {errors.general && <p className="error">{errors.general[0]}</p>}
+        {errors.general && <p className={cx("error")}>{errors.general[0]}</p>}
 
-        <button className="primary-btn">Login</button>
+        <Button className={cx("primary-btn")}>Log in</Button>
+
+        <div className={cx("botgroup")}>
+            <div className={cx('group')}> 
+                <p> Do not have an account? <a href="" className={cx("link")}> Sign up now</a></p>
+                
+            </div>
+            <div className={cx('group')}>
+              <p> Are you a recruiter?  <a href="" className={cx("link")}> Log in here</a> </p>
+             
+            </div>
+        </div>
       </form>
-    </>
+    </div>
   );
 }
