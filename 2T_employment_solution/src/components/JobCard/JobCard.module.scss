@@ -6,15 +6,16 @@
     gap: 1.5rem;
 
     border-radius: 0.625rem;
-    border: 1px solid #000;
-    min-width: 35rem;
+    border: 1.5px solid var(--green);
+    min-width: 25rem;
     min-height: 17rem;
     position: relative;
+    background-color: #F2FFFD;
 
     .header {
         display: flex;
         align-items: center;
-        gap: 7.4375rem;
+        gap: 7.4375rem; 
         .wrapper {
             display: flex;
             align-items: flex-start;
@@ -69,11 +70,13 @@
     }
     .saved:hover {
         cursor: pointer;
+        scale: 1.2;
+        color: var(--green);
     }
 
     .saved, .save {
      
-        object-fit: contain;  /* Đảm bảo rằng hình ảnh hiển thị đúng tỉ lệ */
+        object-fit: contain;
       }
 
     .content {
@@ -161,23 +164,7 @@
                 color: #20c6b1;
             }
         }
-        .buttonEdit {
-            width: 3rem;
-            display: flex;
-            height: 3.5rem;
-            padding: 0.5rem 1rem;
-            justify-content: center;
-            align-items: center;
-            gap: 0.625rem;
-            flex: 1 0 0;
-            &:hover {
-                cursor: pointer;
-                background: #fff;
-                border: 1px solid #20c6b1;
-                color: #20c6b1;
-            }
-
-        }
+        
         .buttonReadMore{
             background: #fff;
             width: 3rem;
@@ -190,24 +177,38 @@
             flex: 1 0 0;
         }
 
-        .buttonDelete {
-            background: #fff;
+        .buttonDelete {   
+            position:absolute;
             color: black; 
-            border: 1px solid #20c6b1;
-            width: 3rem;
+            width: 9rem;
+            height: 3.5rem;
+            padding: 0.5rem 1rem;
+            gap: 0.625rem;
+            flex: 1 0 0;
+            right: -2.25rem;
+            top: 80px;
+            &:hover {
+                cursor: pointer;
+                scale: 1.2;
+                color: var(--green);
+            }
+        }
+        .buttonEdit {
+            position:absolute;
+            width: 9rem;
             display: flex;
             height: 3.5rem;
             padding: 0.5rem 1rem;
-            justify-content: center;
-            align-items: center;
-            gap: 0.625rem;
             flex: 1 0 0;
+            top: 40px;
+            right: -2.25rem;
+ 
             &:hover {
-                cursor: pointer;
-                background: #fff;
-              
-                color: #20c6b1;
+                cursor: pointer ;
+                scale: 1.2;
+                color: var(--green);
             }
+
         }
 
 
@@ -229,7 +230,75 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-height: 80vh; 
-    overflow-y: auto; 
+    width: 350px;
+    min-height: 400px;
+    
+    
+    .bar{
+         background:rgb(205, 202, 202);
+         position: "relative";
+         height: "5px";
+         border-radius: 10px;
+         overflow: "hidden";
+          
+
+         .progressBar{
+            height: 5px;
+            background: #0077b6;
+            border-radius: 5px;
+            transition: width 0.4s ease-in-out;
+            width: 350px;   
+
+        }
+
+    }
+
+    .step{    
+        position: relative;
+        right: -230px;
+        display: "flex";
+        margin-top: 10px;
+        font-size: 14px;
+        color: "#0077b6";
+        color: var(--green);
+        margin-bottom: 15px;    
+    }
+     
+    .content{
+         margin-top: 20px;
+    }   
+    .Button{
+         position: absolute;
+         bottom: 30px;
+         right: 30px;
+         height: 30px;
+         width: 13  0px;
+         color: white;
+         font-size: 16px;
+    }
+
+    .Button1{
+        position: absolute;
+         bottom: 30px;
+         left: 30px;
+         height: 30px;
+         width: 13  0px;
+         color: white;
+         font-size: 16px;
+    }
+
+    .btnBack{
+        scale: 1.9;
+        color: var(--green);
+        font-size: 16px;
+        position: absolute;
+        top: 30px;
+        left: 25px;
+
+        &:hover{
+             cursor: pointer;
+        }
+    }
     
   }
   
@@ -242,56 +311,36 @@
     background-color: rgba(0, 0, 0, 0.75);
   }
 
-  .modalApply {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    width: 90%;
-    z-index: 1000;
-  }
-  
-  .input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
-  
-  .buttons {
-    display: flex;
-    justify-content: space-between;
-  }
-  
+ .spinner{
+     position: absolute;
+     top: 50%;
+     right: 50%;
+     color: var(--green);
+     z-index: 9999999   ;
+ } 
 
-  
-  .buttonApply:hover {
-    background-color: #218838;
-  }
-  
-  .buttonClose {
-    background-color: #dc3545;
-    color: white;
-    font-size: 16px;
-  }
-  
-  .buttonClose:hover {
-    background-color: #c82333;
-  }
-  
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.75);
-    z-index: 999;
-  }
-  
+ .info{
+        display: flex;
+        flex-direction: column;
+        font-size: 1.5rem;
+        color: #000;
+        margin-top: 10px;
+ }
+ .contentitem{
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    color: #000;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+ }
+
+ .resume{
+    width: 100%;
+    height: 150px;
+    border: 1px solid #4a3d3d;
+    border-radius: 10px;
+    margin-top: 10px;
+ }

@@ -1,17 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect, useReducer } from "react";
 import axios from "axios";
-import { useEffect } from "react"; 
 import Modal from "react-modal";
 import classNames from "classnames/bind";
 import styles from "./JobCard.module.scss";
 import Image from "~/components/Image";
 import Button from "~/components/Button";
 import icons from "~/assets/icons";
+import ClipLoader from "react-spinners/ClipLoader";
+import { IoReturnDownBackOutline } from "react-icons/io5";
+import { MdEdit, MdDeleteForever } from "react-icons/md";
 
 const cx = classNames.bind(styles);
 
 Modal.setAppElement("#root");
 
+// eslint-disable-next-line react/prop-types
 function JobCard({
   src,
   name,
@@ -26,13 +29,43 @@ function JobCard({
   job_id,
   token,
   hideFooter,
-  onEditClick, 
-  onDeleteClick
-   // Thông tin chi tiết công việc
+  onEditClick,
+  onDeleteClick,
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false); // Modal hiển thị chi tiết công việc
   const [applyModalIsOpen, setApplyModalIsOpen] = useState(false); // Modal Apply // Lấy user và token từ context
   const [isSaved, setIsSaved] = useState(false);
+  // const [selectedJob, setSelectedJob] = useState(null);
+  const [employerInfo, setEmployerInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [resume, setResume] = useState(""); // Trạng thái Resume
+  const [cvFile, setCvFile] = useState(null);
+  const employerCache = {};
+  // Step Management Reducer
+  const initialState = { step: 1, progressPercentage: 30 };
+  const totalSteps = 3;
+  //
+
+  const stepReducer = (state, action) => {
+    switch (action.type) {
+      case "NEXT":
+        return {
+          step: Math.min(state.step + 1, totalSteps),
+          progressPercentage: Math.min(state.progressPercentage + 30, 100),
+        };
+      case "PREV":
+        return {
+          step: Math.max(state.step - 1, 1),
+          progressPercentage: Math.max(state.progressPercentage - 30, 30),
+        };
+      case "RESET":
+        return initialState;
+      default:
+        return state;
+    }
+  };
+  const [stepState, dispatch] = useReducer(stepReducer, initialState);
+
   const API_URL = "http://localhost:8000/api";
 
   useEffect(() => {
@@ -89,41 +122,109 @@ function JobCard({
     }
   };
 
-  const openModal = () => setModalIsOpen(true);
-  const closeModal = () => setModalIsOpen(false);
-
-  const openApplyModal = () => setApplyModalIsOpen(true); // Mở modal Apply
-  const closeApplyModal = () => setApplyModalIsOpen(false); // Đóng modal Apply
-
-  const [coverLetter, setCoverLetter] = useState(""); // Trạng thái Cover Letter
-  const [resume, setResume] = useState(""); // Trạng thái Resume
-
-  const handleApply = () => {
-    // Xử lý khi người dùng submit application (ví dụ: gọi API)
-    console.log("Apply submitted with:", coverLetter, resume);
-    closeApplyModal(); // Đóng modal Apply sau khi gửi
+  // Open Job Details Modal
+  const openModal = (details) => {
+    setModalIsOpen(true);
   };
 
- 
+  // Close Job Details Modal
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const openApplyModal = async (details) => {
+    try {
+      dispatch({ type: "RESET" }); // Reset Step State
+      setModalIsOpen(false);
+      setApplyModalIsOpen(true);
+
+      const employerId = details.employer_id;
+      if (employerCache[employerId]) {
+        setEmployerInfo(employerCache[employerId]);
+      } else {
+        const response = await axios.get(`http://localhost:8000/api/user/${employerId}`);
+        if (response.status === 200) {
+          employerCache[employerId] = response.data.user;
+          setEmployerInfo(response.data.user);
+        } else {
+          console.error("Failed to fetch employer info.");
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching employer information:", err);
+    }
+  };
+  // Mở modal Apply
+  const closeApplyModal = () => {
+    setApplyModalIsOpen(false);
+    setEmployerInfo(null);
+    setCvFile(null);
+    setResume(null);
+    dispatch({ type: "RESET" });
+    setIsLoading(false);
+  }; // Đóng modal Apply
+
+  const [coverLetter, setCoverLetter] = useState(""); // Trạng thái Cover Letter
+
+  const handleApplySubmit = async () => {
+    setIsLoading(true);
+    try {
+      // Create FormData for file and other data
+      const formData = new FormData();
+      formData.append("job_id", details.job_id);
+      formData.append("applicant_id", user.user_id);
+      formData.append("cover_letter", cvFile);
+      formData.append("resume_path", resume);
+      formData.append("poster_id", details.employer_id);
+
+      // Send the FormData via POST request to the API
+      const response = await axios.post(
+        "http://localhost:8000/api/applications",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data", // Required for file uploads
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Application submitted successfully!");
+        closeApplyModal();
+      } else {
+        console.error("Failed to submit application.");
+      }
+    } catch (err) {
+      console.error("Error applying for job:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCvFile(file); // Set CV file
+    }
+  };
   return (
     <div className={cx("container")}>
       <div className={cx("header")}>
         <div className={cx("wrapper")}>
           <Image className={cx("logo")} src={src} />
           <div className={cx("group")}>
-            <div className={cx("name")} onClick={() => handleClickDetails('name')}>
+            <div className={cx("name")} onClick={() => handleClickDetails("name")}>
               {name}
             </div>
-            <div className={cx("address")} onClick={() => handleClickDetails('address')}>
+            <div className={cx("address")} onClick={() => handleClickDetails("address")}>
               {address}
-
             </div>
           </div>
         </div>
       </div>
 
       {/* Icon Save with onClick handler */}
-      <div className={cx("saveIcon")} onClick={handleSave} >
+      <div className={cx("saveIcon")} onClick={handleSave}>
         <img
           src={isSaved ? icons.saved : icons.save} // Toggle giữa save và saved icon
           className={cx("save")}
@@ -131,40 +232,43 @@ function JobCard({
       </div>
 
       <div className={cx("content")}>
-        <div className={cx("position")} onClick={() => handleClickDetails('position')}>
+        <div className={cx("position")} onClick={() => handleClickDetails("position")}>
           <p className={cx("title")}>{position}</p>
         </div>
         <div className={cx("threeShortdecr")}>
-          <div className={cx("shortdecr")} onClick={() => handleClickDetails('shortdecr1')}>
+          <div
+            className={cx("shortdecr")}
+            onClick={() => handleClickDetails("shortdecr1")}
+          >
             <p className={cx("shortdecrcontent")}>{shortdecr1}</p>
           </div>
-          <div className={cx("shortdecr")} onClick={() => handleClickDetails('shortdecr2')}>
+          <div
+            className={cx("shortdecr")}
+            onClick={() => handleClickDetails("shortdecr2")}
+          >
             <p className={cx("shortdecrcontent")}>{shortdecr2}</p>
           </div>
-          <div className={cx("shortdecr")} onClick={() => handleClickDetails('shortdecr3')}>
+          <div
+            className={cx("shortdecr")}
+            onClick={() => handleClickDetails("shortdecr3")}
+          >
             <p className={cx("shortdecrcontent")}>{shortdecr3}</p>
           </div>
         </div>
-        <div className={cx("longdecr")} onClick={() => handleClickDetails('description')}>
+        <div className={cx("longdecr")} onClick={() => handleClickDetails("description")}>
           <p className={cx("decription")}>{decription}</p>
         </div>
       </div>
 
       <div className={cx("footer")}>
         {hideFooter ? (
-          <>
-            {/* Nút Edit */}
-            <Button className={cx("buttonEdit")} onClick={onEditClick}>
-              Edit
-            </Button>
-            {/* Nút Delete */}
-            <Button className={cx("buttonDelete")} onClick={onDeleteClick}>
-              Delete
-            </Button>
-          </> 
+          <>         
+            <MdEdit className={cx("buttonEdit")} onClick={onEditClick} />          
+            <MdDeleteForever className={cx("buttonDelete")} onClick={onDeleteClick}/>
+          </>
         ) : (
           <>
-            <Button className={cx("buttonApply")} onClick={openApplyModal}>
+            <Button className={cx("buttonApply")} onClick={() => openApplyModal(details)}>
               Apply
             </Button>
             <Button className={cx("buttonReadMore")} outline onClick={openModal}>
@@ -174,10 +278,7 @@ function JobCard({
         )}
       </div>
 
-   
-
-
-         {/* Modal Hiển thị Chi Tiết Công Việc */}
+      {/* Modal Hiển thị Chi Tiết Công Việc */}
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -213,53 +314,95 @@ function JobCard({
             <strong>Contact Phone:</strong> {details?.contact_phone || "N/A"}
           </p>
 
-          <button onClick={closeModal}>Close</button>
+          {details && <Button onClick={() => openApplyModal(details)}>Apply</Button>}
         </div>
       </Modal>
 
-      {/* Modal Apply */}
+      {/* Apply Modal */}
       <Modal
         isOpen={applyModalIsOpen}
         onRequestClose={closeApplyModal}
         contentLabel="Apply for Job"
-        className={cx("modalApply")}
+        className={cx("modal")}
         overlayClassName={cx("overlay")}
       >
-        <div>
-          <h2>Apply for {details?.title || name}</h2>
-          <div>
-            <label>
-              <strong>Cover Letter</strong>
-            </label>
-            <textarea
-              value={coverLetter}
-              onChange={(e) => setCoverLetter(e.target.value)}
-              placeholder="Write your cover letter here..."
-              rows="4"
-              className={cx("input")}
-            />
-          </div>
-          <div>
-            <label>
-              <strong>Upload Resume</strong>
-            </label>
-            <input
-              type="file"
-              onChange={(e) => setResume(e.target.files[0])}
-              className={cx("input")}
-            />
-          </div>
-          <Button className={cx("buttonApply")} onClick={handleApply}>
-            Submit Application
-          </Button>
-          <Button className={cx("buttonClose")} onClick={closeApplyModal}>
-            Close
-          </Button>
-        </div>
-    </Modal>
-   </div>
-  );
+        {employerInfo ? (
+          <div className={cx("containermodel")}>
+            <div className={cx("step")}>
+              Step {stepState.step} of {totalSteps}
+            </div>
+            <div className={cx("bar")}>
+              <div
+                className={cx("progressBar")}
+                style={{ width: `${stepState.progressPercentage}%` }}
+              ></div>
+            </div>
 
+            {/* Step 1: Upload CV */}
+            {stepState.step === 1 && (
+              <div className={cx("content")}>
+                <h3 className={cx("contentitem")}>Upload Your CV</h3>
+                <h5 className={cx("contentitem")}>
+                  Employers use your CV to determine whether you have the right experience
+                  for the job.
+                </h5>
+                <h5>This file &lt; 9MB </h5>
+                <input type="file" onChange={handleFileChange} />
+                <Button
+                  className={cx("Button")}
+                  onClick={() => dispatch({ type: "NEXT" })}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+
+            {/* Step 2: Supporting Documents */}
+            {stepState.step === 2 && (
+              <div className={cx("content")}>
+                <h3>Do you have any supporting documents?</h3>
+                <textarea
+                  className={cx("resume")}
+                  onChange={(e) => setResume(e.target.value)}
+                />
+                <IoReturnDownBackOutline
+                  onClick={() => dispatch({ type: "PREV" })}
+                  className={cx("btnBack")}
+                />
+                <Button
+                  className={cx("Button")}
+                  onClick={() => dispatch({ type: "NEXT" })}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+
+            {/* Step 3: Confirm Information */}
+            {stepState.step === 3 && (
+              <div className={cx("content")}>
+                <h3>Confirm your information</h3>
+                <p>Your name: {user?.user_name}</p>
+                <p>Your email: {user?.email}</p>
+                <IoReturnDownBackOutline
+                  onClick={() => dispatch({ type: "PREV" })}
+                  className={cx("btnBack")}
+                />
+                <Button className={cx("Button1")} onClick={closeApplyModal}>
+                  Cancel
+                </Button>
+                <Button className={cx("Button")} onClick={handleApplySubmit}>
+                  Submit
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <ClipLoader className={cx("spinner")} />
+        )}
+      </Modal>
+    </div>
+  );
 }
 
 export default JobCard;

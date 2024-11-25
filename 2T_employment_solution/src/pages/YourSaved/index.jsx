@@ -55,8 +55,9 @@ function YourSaved() {
                             decription={job.description}
                             details={job}
                             job_id={job.job_id}
-                            user={user} // Truyền user vào JobCard
-                            token={token} // Truyền token vào JobCard
+                            user={user} 
+                            token={token} 
+                            
                         />
                     ))
                 ) : (

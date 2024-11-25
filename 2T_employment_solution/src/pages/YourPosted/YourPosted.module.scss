@@ -2,6 +2,7 @@
 .container {
   padding: 20px;
   background-color: #f4f4f4;
+  min-height: 680px;
 }
 
 .title {
@@ -104,3 +105,10 @@ label {
     grid-template-columns: 1fr; /* Single column layout on mobile */
   }
 }
+.spinner{
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  color: var(--green);
+  z-index: 9999999   ;
+} 
