@@ -6,9 +6,9 @@ const cx = classNames.bind(styles);
 
 function NotificationSection() {
     return ( 
-        <section className={cx("container")}>
+        <section className={cx("container")} data-aos="zoom-in" data-aos-delay="2000">
             <div className={cx("content")}>
-                <div className={cx("header")}>
+                <div className={cx("header")} >
                     <p className={cx("meassage")}>Want to get notified on <br />    
                     every Job Posting?</p>
                 </div>  

@@ -7,21 +7,19 @@ import styles from "./YourPosted.module.scss";
 import { AppContext } from "~/Context/AppContext";
 import { ClipLoader } from "react-spinners";
 import classNames from "classnames/bind";
-
 const cx = classNames.bind(styles);
 Modal.setAppElement("#root");
 
 function YourPosted() {
   const [postedJobs, setPostedJobs] = useState([]);
   const [loading, setLoading] = useState(false); // Loading state
-  const { user, token } = useContext(AppContext);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [selectedJob, setSelectedJob] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [editData, setEditData] = useState({});
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  const API_URL = 'http://localhost:8000/api';
+  
+  const { user, user_id ,token } = useContext(AppContext);
+  const API_URL = "http://localhost:8000/api";
 
   // Fetch posted jobs on initial render
   useEffect(() => {
@@ -30,7 +28,7 @@ function YourPosted() {
       try {
         const response = await axios.post(
           `${API_URL}/jobs/YourPosted`,
-          { user_id: user.user_id },
+          { user_id },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -39,21 +37,20 @@ function YourPosted() {
         );
         setPostedJobs(response.data);
       } catch (error) {
-        setErrorMessage('Could not fetch posted jobs.');
-        console.error('Error fetching posted jobs:', error);
+        setErrorMessage("Could not fetch posted jobs.");
+        console.error("Error fetching posted jobs:", error);
       } finally {
         setLoading(false); // Set loading to false after fetching
       }
     };
 
     fetchPostedJobs();
-  }, [user, token]);
+  }, [user,token]);
 
   // Update job details in the form
   const handleEditClick = (job) => {
     setSelectedJob(job);
     setEditData({ ...job });
-    setSelectedImage(null); // Reset image when opening the modal
     setModalIsOpen(true);
   };
 
@@ -62,16 +59,15 @@ function YourPosted() {
     setLoading(true); // Set loading to true while saving
     const formData = new FormData();
 
-    Object.keys(editData).forEach((key) => {
-      if (editData[key] !== null && editData[key] !== '') {
-        formData.append(key, editData[key]);
-      }
-    });
-
-    if (selectedImage) {
-      formData.append('image', selectedImage);
-    }
-
+     Object.keys(editData).forEach((key) => {
+  if (
+    editData[key] !== null &&
+    editData[key] !== "" &&
+    !["created_at", "updated_at", "employer_id", "posted_at", "image", "job_id"].includes(key)
+  ) {
+    formData.append(key, editData[key]);
+  }
+});   
     try {
       const response = await axios.post(
         `${API_URL}/jobedit/${selectedJob.job_id}`,
@@ -79,7 +75,7 @@ function YourPosted() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -92,32 +88,29 @@ function YourPosted() {
         );
         setModalIsOpen(false);
       } else {
-        setErrorMessage('Failed to update job.');
-        console.error('Job update failed:', response.data);
+        setErrorMessage("Failed to update job.");
+        console.error("Job update failed:", response.data);
       }
     } catch (error) {
-      setErrorMessage('Error updating job.');
-      console.error('Error updating job:', error);
+      setErrorMessage("Error updating job.");
+      console.error("Error updating job:", error);
     } finally {
       setLoading(false); // Set loading to false after saving
     }
   };
 
-  // Delete job handler
   const handleDeleteClick = async (jobId) => {
-    if (window.confirm('Are you sure you want to delete this job?')) {
+    if (window.confirm("Are you sure you want to delete this job?")) {
       setLoading(true); // Set loading to true while deleting
       try {
         await axios.post(`${API_URL}/jobdelete/${jobId}`, null, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        setPostedJobs((prevJobs) =>
-          prevJobs.filter((job) => job.job_id !== jobId)
-        );
+        setPostedJobs((prevJobs) => prevJobs.filter((job) => job.job_id !== jobId));
       } catch (error) {
-        setErrorMessage('Could not delete job.');
-        console.error('Error deleting job:', error);
+        setErrorMessage("Could not delete job.");
+        console.error("Error deleting job:", error);
         console.log(errorMessage);
       } finally {
         setLoading(false); // Set loading to false after deleting
@@ -125,18 +118,12 @@ function YourPosted() {
     }
   };
 
-  // Handle image selection
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedImage(file);
-  };
-
   return (
     <div className={cx("container")}>
       <h1 className={cx("title")}>Your Posted Jobs</h1>
       <div className={cx("jobs")}>
         {loading ? (
-            <ClipLoader className={cx("spinner")} />
+          <ClipLoader className={cx("spinner")} />
         ) : postedJobs.length > 0 ? (
           postedJobs.map((job) => (
             <JobCard
@@ -173,10 +160,53 @@ function YourPosted() {
       >
         <div>
           <h2>Edit Job: {selectedJob?.title}</h2>
-          {Object.entries(editData).map(([key, value]) => (
-            key !== 'image' && (
+          {Object.entries(editData).map(([key, value]) => {
+            if (
+              ["created_at", "updated_at", "employer_id", "posted_at", "image","job_id"].includes(
+                key
+              )
+            )
+              return null;
+
+            if (key === "requirements" || key === "description") {
+              return (
+                <div key={key}>
+                  <label>
+                    <strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong>
+                  </label>
+                  <textarea
+                    value={value}
+                    onChange={(e) => setEditData({ ...editData, [key]: e.target.value })}
+                    placeholder={`Enter ${key}`}
+                    className={cx("textarea")}
+                  />
+                </div>
+              );
+            }
+
+            if (key === "expires_at") {
+              return (
+                <div key={key}>
+                  <label>
+                    <strong>
+                      {key.charAt(0).toUpperCase() + key.slice(1).replace("_", " ")}
+                    </strong>
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={value}
+                    onChange={(e) => setEditData({ ...editData, [key]: e.target.value })}
+                    className={cx("datetime")}
+                  />
+                </div>
+              );
+            }
+
+            return (
               <div key={key}>
-                <label><strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong></label>
+                <label>
+                  <strong>{key.charAt(0).toUpperCase() + key.slice(1)}</strong>
+                </label>
                 <input
                   type="text"
                   value={value}
@@ -185,18 +215,8 @@ function YourPosted() {
                   className={cx("input")}
                 />
               </div>
-            )
-          ))}
-          <div className={cx("inputGroup")}>
-            <label><strong>Job Image</strong></label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className={cx("inputField")}
-            />
-            {selectedImage && <p>Selected image: {selectedImage.name}</p>}
-          </div>
+            );
+          })}
 
           <div>
             {loading ? (
@@ -204,7 +224,10 @@ function YourPosted() {
             ) : (
               <>
                 <Button onClick={handleSaveEdit}>Save Changes</Button>
-                <Button className={cx("buttonClose")} onClick={() => setModalIsOpen(false)}>
+                <Button
+                  className={cx("buttonClose")}
+                  onClick={() => setModalIsOpen(false)}
+                >
                   Close
                 </Button>
               </>

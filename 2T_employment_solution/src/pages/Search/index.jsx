@@ -24,10 +24,11 @@ function useQuery() {
 function SearchResults() {
   const [searchResult, setSearchResult] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { user, token } = useContext(AppContext);
+  const { user, token ,isLoading1 ,user_id} = useContext(AppContext);
   const query = useQuery();
   const searchValue = query.get("query");
 
+   
   // Debounced Fetch for Search Results
   const fetchSearchResults = debounce(async (query) => {
     setIsLoading(true);
@@ -49,6 +50,17 @@ function SearchResults() {
     fetchSearchResults(searchValue);
   }, [searchValue]);
 
+  if (isLoading1) {
+    return <p>Loading...</p>;
+  }
+  if (!user_id) {
+    return <p>Loading...</p>;
+  }
+  if(!token){
+    return <p>login</p>;
+  }
+
+ 
   return (
     <div className={cx("searchResults")}>
       <div className={cx("left")}>

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PostJob;
+
 
 class Application extends Model
 {
@@ -25,6 +27,11 @@ class Application extends Model
         'status',
         'applied_at',
     ];
+
+    public function job()
+    {
+        return $this->belongsTo(PostJob::class, 'job_id', 'job_id');
+    }
 
 
 }

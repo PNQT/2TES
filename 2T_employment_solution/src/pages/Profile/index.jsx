@@ -8,6 +8,7 @@ import Image from "~/components/Image";
 import Button from "~/components/Button";
 import { AppContext } from "~/Context/AppContext";
 import images from "~/assets/images";
+import { useNavigate } from "react-router-dom";
 
 const cx = classNames.bind(styles);
 
@@ -18,31 +19,15 @@ function Profile() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [avatarModalIsOpen, setAvatarModalIsOpen] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/api/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.user);
-        } else {
-          console.error("Failed to fetch user data");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    if (!user && token) {
-      fetchUserData();
+    if (!token) {
+      alert("Bạn cần đăng nhập để truy cập trang này!");
+      navigate("/login");
     }
-  }, [token, user, setUser]);
+  }, [token]);
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -66,7 +51,7 @@ function Profile() {
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatarPreview(reader.result); 
+        setAvatarPreview(reader.result);
       };
       reader.readAsDataURL(file);
     } else {
@@ -77,6 +62,7 @@ function Profile() {
   // Handle submitting the avatar change
   const handleAvatarChange = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
 
     const formData = new FormData();
     formData.append("avatar", event.target.avatarInput.files[0]);
@@ -102,21 +88,19 @@ function Profile() {
     } catch (error) {
       console.error("Lỗi khi thay đổi avatar:", error);
       alert("Có lỗi xảy ra. Vui lòng thử lại!");
+    } finally {
+      setIsLoading(false); // End loading
     }
   };
 
   const handleChangeInfo = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading
     const formData = new FormData();
     formData.append("user_name", e.target.user_name.value);
     formData.append("phone", e.target.phone.value);
     formData.append("address", e.target.address.value);
     formData.append("bio", e.target.bio.value);
-    
-    if (!token) {
-      alert("User is not authenticated. Please log in.");
-      return;
-    }
 
     try {
       const res = await axios.post("http://localhost:8000/api/user/profile", formData, {
@@ -135,7 +119,6 @@ function Profile() {
           address: data.user.address,
           bio: data.user.bio,
         }));
-        console.log(user);      
         closeModal();
       } else {
         alert("Thay đổi thông tin thất bại!");
@@ -143,6 +126,8 @@ function Profile() {
     } catch (error) {
       console.error("Lỗi khi thay đổi thông tin:", error);
       alert("Có lỗi xảy ra. Vui lòng thử lại!");
+    } finally {
+      setIsLoading(false); // End loading
     }
   };
 
@@ -150,12 +135,20 @@ function Profile() {
     <div className={cx("profile-container")}>
       <div className={cx("profile-header")}>
         <div className={cx("avatar-container")} onClick={avatarOpenModal}>
-          <Image
-            className={cx("profile-avatar")}
-            src={user.avatar}
-            alt="User Avatar"
-            onError={(e) => (e.target.src = images.dafaultAvatar)}
-          />
+          {user ? (
+            <Image
+              className={cx("profile-avatar")}
+              src={user.avatar || images.dafaultAvatar}
+              alt="User Avatar"
+              onError={(e) => (e.target.src = images.dafaultAvatar)}
+            />
+          ) : (
+            <Image
+              className={cx("profile-avatar")}
+              src={images.dafaultAvatar}
+              alt="Default Avatar"
+            />
+          )}
           <div className={cx("camera-icon")}>
             <FaCamera />
           </div>
@@ -193,12 +186,10 @@ function Profile() {
         onRequestClose={closeModal}
         contentLabel="Edit Profile"
         className={cx("modal")}
-        overlayClassName={cx("overlay")
-        }
+        overlayClassName={cx("overlay")}
       >
         <h2>Edit Profile</h2>
-        <form onSubmit={handleChangeInfo}
-        >
+        <form onSubmit={handleChangeInfo}>
           <div className={cx("form-group")}>
             <label htmlFor="name">Name</label>
             <input
@@ -206,7 +197,7 @@ function Profile() {
               id="name"
               name="user_name"
               defaultValue={user?.user_name || ""}
-              placeholder="Enter your name" 
+              placeholder="Enter your name"
             />
           </div>
 
@@ -240,8 +231,8 @@ function Profile() {
             ></textarea>
           </div>
           <div className={cx("form-actions")}>
-            <Button type="submit" >
-              Save
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save"}
             </Button>
             <Button type="button" onClick={closeModal}>
               Cancel
@@ -281,8 +272,8 @@ function Profile() {
             </div>
           )}
           <div className={cx("groupButton")}>
-            <Button type="submit" disabled={!avatarPreview}>
-              Thay Đổi Avatar
+            <Button type="submit" disabled={!avatarPreview || isLoading}>
+              {isLoading ? "Uploading..." : "Thay Đổi Avatar"}
             </Button>
             <Button onClick={avatarCloseModal} outline>
               Đóng

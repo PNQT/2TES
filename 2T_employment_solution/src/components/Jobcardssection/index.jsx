@@ -11,7 +11,7 @@ const cx = classNames.bind(styles);
 function JobCardSection() {
     return ( 
         <section className={cx("container")}>
-            <div className={cx("header")}>
+            <div className={cx("header")} data-aos="zoom-in" data-aos-delay="500">
                 <div className={cx("headerTitle")}>
                     <p className={cx("Title")}>
                        Featured Jobs
@@ -24,7 +24,7 @@ function JobCardSection() {
                 </div>
                 <div className=""></div>
             </div>
-            <div className={cx("groupCard")}>
+            <div className={cx("groupCard")} data-aos="fade-up" data-aos-delay="1400">
                 <JobCardFake 
                     className={cx("groupCardItem")}
                     src={icons.instar}
@@ -95,10 +95,12 @@ function JobCardSection() {
                 />         
                 
             </div>
-            <div className={cx("footer")}>
+            <div className={cx("footer")}>                                              
     <Button 
      className={cx("button")}
-     rightIcon={<Image className={cx("icon")} src={icons.arrow_left1} />}>
+     rightIcon={<Image className={cx("icon")} src={icons.arrow_left1} />}
+     data-aos="zoom-in"
+     >
     <span className={cx("text")}>Find More Jobs</span>
 
     </Button>

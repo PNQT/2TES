@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useContext} from "react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import { IoIosNotificationsOutline } from "react-icons/io";
@@ -7,6 +7,7 @@ import styles from "./Notification.module.scss";
 import TagNotification from "~/components/TagNotification";
 import axios from "axios";
 import Modal from "react-modal";
+import { AppContext } from "~/Context/AppContext";
 
 const cx = classNames.bind(styles);
 
@@ -14,37 +15,18 @@ function Notification() {
   const [visible, setVisible] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifi, setNotifi] = useState([]);
-  const [posterId, setPosterId] = useState(null);
   const [emails, setEmails] = useState({});
   const [names, setNames] = useState({});
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const { user_id } = useContext(AppContext);
 
-  // Fetch user ID when component mounts
-  useEffect(() => {
-    const fetchUserId = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/api/user", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        setPosterId(response.data.user_id);
-      } catch (error) {
-        console.error("Error fetching user ID:", error);
-      }
-    };
-
-    fetchUserId();
-  }, []);
-
-  // Fetch notifications periodically
   useEffect(() => {
     const fetchNotifications = async () => {
-      if (!posterId) return;
+      if (!user_id) return;
 
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/notifiaction/${posterId}`
+          `http://localhost:8000/api/notifiaction/${user_id}`
         );
         if (res.status === 200) {
           const data = res.data.data || [];
@@ -60,7 +42,7 @@ function Notification() {
     const interval = setInterval(fetchNotifications, 5000);
 
     return () => clearInterval(interval); // Clear interval on unmount
-  }, [posterId]);
+  }, [user_id]);
 
   // Fetch emails and job names
   useEffect(() => {

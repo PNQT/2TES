@@ -7,8 +7,9 @@ import Image from "~/components/Image";
 import Button from "~/components/Button";
 import icons from "~/assets/icons";
 import ClipLoader from "react-spinners/ClipLoader";
-import { IoReturnDownBackOutline } from "react-icons/io5";
+import { IoReturnDownBackOutline, IoBag, IoTime } from "react-icons/io5";
 import { MdEdit, MdDeleteForever } from "react-icons/md";
+import { RiMoneyDollarCircleFill } from "react-icons/ri";
 
 const cx = classNames.bind(styles);
 
@@ -31,6 +32,7 @@ function JobCard({
   hideFooter,
   onEditClick,
   onDeleteClick,
+  days,
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false); // Modal hiển thị chi tiết công việc
   const [applyModalIsOpen, setApplyModalIsOpen] = useState(false); // Modal Apply // Lấy user và token từ context
@@ -164,8 +166,6 @@ function JobCard({
     setIsLoading(false);
   }; // Đóng modal Apply
 
-  const [coverLetter, setCoverLetter] = useState(""); // Trạng thái Cover Letter
-
   const handleApplySubmit = async () => {
     setIsLoading(true);
     try {
@@ -222,7 +222,8 @@ function JobCard({
           </div>
         </div>
       </div>
-
+      
+      <div className={cx("dateAgo")}>{days}</div>
       {/* Icon Save with onClick handler */}
       <div className={cx("saveIcon")} onClick={handleSave}>
         <img
@@ -240,19 +241,24 @@ function JobCard({
             className={cx("shortdecr")}
             onClick={() => handleClickDetails("shortdecr1")}
           >
+            <IoTime />
             <p className={cx("shortdecrcontent")}>{shortdecr1}</p>
           </div>
           <div
             className={cx("shortdecr")}
             onClick={() => handleClickDetails("shortdecr2")}
           >
+            <RiMoneyDollarCircleFill />
             <p className={cx("shortdecrcontent")}>{shortdecr2}</p>
           </div>
           <div
             className={cx("shortdecr")}
             onClick={() => handleClickDetails("shortdecr3")}
           >
-            <p className={cx("shortdecrcontent")}>{shortdecr3}</p>
+            <IoBag />
+            <p className={cx("shortdecrcontent")}>
+              {new Date(shortdecr3).toLocaleDateString()}{" "}
+            </p>
           </div>
         </div>
         <div className={cx("longdecr")} onClick={() => handleClickDetails("description")}>
@@ -262,9 +268,9 @@ function JobCard({
 
       <div className={cx("footer")}>
         {hideFooter ? (
-          <>         
-            <MdEdit className={cx("buttonEdit")} onClick={onEditClick} />          
-            <MdDeleteForever className={cx("buttonDelete")} onClick={onDeleteClick}/>
+          <>
+            <MdEdit className={cx("buttonEdit")} onClick={onEditClick} />
+            <MdDeleteForever className={cx("buttonDelete")} onClick={onDeleteClick} />
           </>
         ) : (
           <>
@@ -286,36 +292,49 @@ function JobCard({
         className={cx("modal")}
         overlayClassName={cx("overlay")}
       >
-        <div>
-          <h2>{details?.title || name}</h2>
-          <p>{details?.description || decription}</p>
-          <p>
-            <strong>Requirements:</strong> {details?.requirements || "N/A"}
-          </p>
-          <p>
-            <strong>Company Info:</strong> {details?.company_name || position}
-          </p>
-          <p>
-            <strong>Location:</strong> {details?.location || address}
-          </p>
-          <p>
-            <strong>Employment Type:</strong> {details?.job_type || shortdecr1}
-          </p>
-          <p>
-            <strong>Salary:</strong> {details?.salary || shortdecr2}
-          </p>
-          <p>
-            <strong>Posted at:</strong> {details?.created_at || shortdecr3}
-          </p>
-          <p>
-            <strong>Contact Email:</strong> {details?.contact_email || "N/A"}
-          </p>
-          <p>
-            <strong>Contact Phone:</strong> {details?.contact_phone || "N/A"}
-          </p>
+        <ul className={cx("content")}>
+          <h2 className={cx("header")}>{details?.title || name}</h2>
+          <li className={cx("info")}>{details?.description || decription}</li>
 
-          {details && <Button onClick={() => openApplyModal(details)}>Apply</Button>}
-        </div>
+          <li className={cx("info")}>
+            <strong>Requirements:</strong>
+            {details?.requirements
+              ? details.requirements.split(".").map((req, index) => (
+                  <ul key={index}>
+                    <li>{req.trim()}</li>
+                  </ul>
+                ))
+              : "N/A"}
+          </li>
+
+          <li className={cx("info")}>
+            <strong>Company Info:</strong> {details?.company_name || position}
+          </li>
+          <li className={cx("info")}>
+            <strong>Location:</strong> {details?.location || address}
+          </li>
+          <li className={cx("info")}>
+            <strong>Employment Type:</strong> {details?.job_type || shortdecr1}
+          </li>
+          <li className={cx("info")}>
+            <strong>Salary:</strong> {details?.salary || shortdecr2}
+          </li>
+          <li className={cx("info")}>
+            <strong>Expries at:</strong> {details?.expires_at || shortdecr3}
+          </li>
+          <li className={cx("info")}>
+            <strong>Contact Email:</strong> {details?.contact_email || "N/A"}
+          </li>
+          <li className={cx("info")}>
+            <strong>Contact Phone:</strong> {details?.contact_phone || "N/A"}
+          </li>
+
+          {details && (
+            <Button onClick={() => openApplyModal(details)} classNames={cx("btnApplyhi")}>
+              Apply
+            </Button>
+          )}
+        </ul>
       </Modal>
 
       {/* Apply Modal */}
@@ -391,8 +410,16 @@ function JobCard({
                 <Button className={cx("Button1")} onClick={closeApplyModal}>
                   Cancel
                 </Button>
-                <Button className={cx("Button")} onClick={handleApplySubmit}>
-                  Submit
+                <Button
+                  className={cx("Button")}
+                  onClick={handleApplySubmit}
+                  disabled={isLoading} // Disable button while loading
+                >
+                  {isLoading ? (
+                    <ClipLoader size={20} color="#fff" loading={isLoading} /> // Show spinner
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             )}

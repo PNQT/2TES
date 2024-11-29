@@ -6,15 +6,23 @@ import Image from "~/components/Image";
 import Search from "~/components/Search";
 import images from "~/assets/images";
 import icons from "~/assets/icons";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from "react";
 
 const cx = classNames.bind(styles);
 
 function HeroSection() {
+
+    useEffect(() => {
+        AOS.init(); 
+      }, []);
+
     return ( 
         <section className={cx("heroSection")}>
             <div className={cx("heroSectionFindApply")}>
                 <div className={cx("findAndApply")}>
-                    <div className={cx("findAndApplyContent")}>
+                    <div className={cx("findAndApplyContent")} data-aos="fade-up">
                         <h1 className={cx("findAndApplyContentTitle")}>
                             Find and Apply for a Job that suits <br /> 
                             you!
@@ -24,10 +32,10 @@ function HeroSection() {
                             jobs with us. Ready for your next adventure?
                         </p>
                     </div>
-                    <div className={cx('searchBar')}><Search /></div>
+                    <div className={cx('searchBar')}><Search data-aos="fade-up"/></div>
                 </div>
 
-                <div className={cx("quickSearch")}>
+                <div className={cx("quickSearch")} data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="2000">
                     <div className={cx("quickSearchTitle")}>
                         <h2 className={cx("content")}>Most Searched Jobs:</h2>
                     </div>
@@ -65,9 +73,9 @@ function HeroSection() {
             </div>
             <div className={cx("heroSectionContent")}>
                 <figure className={cx("heroSectionContentImage")}>
-                    <Image src={images.blackMan} alt="black_man" className={cx("black_man")}></Image>
+                    <Image src={images.blackMan} alt="black_man" className={cx("black_man")} data-aos="fade-up" data-aos-anchor-placement="center-bottom"></Image>
                 </figure>
-                <div className={cx("heroSectionContentCongratulations")}>
+                <div className={cx("heroSectionContentCongratulations")} data-aos="fade-right" >
                     <Image
                         src={icons.email}
                         className={cx("imageLeft")}
@@ -89,7 +97,7 @@ function HeroSection() {
                         alt="tick"
                     ></img>
                 </div>
-                <div className={cx("heroSectionContentFeedback")}>
+                <div className={cx("heroSectionContentFeedback")} data-aos="fade-left">
                     <img
                         className={cx("heroSectionContentFeedbackImage")}
                         src={icons.ellipse1}
@@ -101,7 +109,7 @@ function HeroSection() {
                         Designer
                     </h5>
                 </div>
-                <div className={cx("heroSectionContentMember")}>
+                <div className={cx("heroSectionContentMember")} data-aos="fade-left">
                     <h4 className={cx("nubmer")}>200+</h4>
                     <h5 className={cx("decr")}>Got job on our platform</h5>
 
@@ -136,7 +144,7 @@ function HeroSection() {
                         ></Image>
                     </div>
                 </div>
-                <div className={cx("heroSectionContentJobs")}>
+                <div className={cx("heroSectionContentJobs")} data-aos="fade-right">
                     <div className={cx("heroSectionContentJobsHeader")}>
                         <div className={cx("Logo")}>
                             <Image

@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import classNames from "classnames/bind";
 import { Link } from "react-router-dom";
 import Tippy from '@tippyjs/react';
-import { FaUser, FaCog, FaSignOutAlt, FaBars, FaPodcast, FaPassport, FaSave } from 'react-icons/fa'; // Import icons
+import { FaUser, FaCog, FaSignOutAlt, FaBars,  FaPassport, FaSave } from 'react-icons/fa'; // Import icons
 
 
 import styles from "./Header.module.scss";
 import Button from "~/components/Button";
 import routesConfig from "~/config/routes";
 import Image from "~/components/Image";
-import Notification from "~/components/Notification";
+import Notification from "~/components/Notification";   
 
 import { AppContext } from "~/Context/AppContext.jsx";
 import { useContext } from "react";
@@ -146,16 +146,17 @@ function Header() {
                     Home
                 </Link>
                 <Link to={routesConfig.categories} className={cx("menuBarItem")}>
-                    Categories
+                    {/* Categories */}
+                    Jobs
                 </Link>
-                <Link to={routesConfig.search} className={cx("menuBarItem")}>
+                {/* <Link to={routesConfig.search} className={cx("menuBarItem")}>
                     Find Jobs
-                </Link>
+                </Link> */}
                 <Link to={routesConfig.post} className={cx("menuBarItem")}>
                     Post Jobs
                 </Link>
                 <Link to={routesConfig.apply} className={cx("menuBarItem")}>
-                    Apply
+                    Applied Jobs
                 </Link>
                 {/* <Link to={routesConfig.home} className={cx("menuBarItem")}>
                     About
@@ -201,7 +202,7 @@ function Header() {
             {isMenuOpen && (
         <nav className={cx('mobileMenu')} ref={menuRef}>
           <Link to={routesConfig.home} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Home</Link>
-          <Link to={routesConfig.search} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Search</Link>
+          {/* <Link to={routesConfig.search} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Search</Link> */}
           <Link to={routesConfig.apply} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Apply</Link>
           <Link to={routesConfig.post} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Post Jobs</Link>
           <Link to={routesConfig.categories} className={cx('menuItemHamberger')} onClick={() => setIsMenuOpen(false)}>Categories Jobs</Link>

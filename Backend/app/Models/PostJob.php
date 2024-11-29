@@ -38,9 +38,15 @@ class PostJob extends Model
         'job_type',
         'created_at',
         'updated_at',
+        'expires_at',
         'contact_email',
         'contact_phone',
         'image',
     ];
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'job_id', 'job_id');
+    }
 
 }
