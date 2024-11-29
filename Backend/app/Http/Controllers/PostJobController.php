@@ -7,6 +7,7 @@ use App\Models\PostJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class PostJobController extends Controller
 {
@@ -182,5 +183,15 @@ class PostJobController extends Controller
             // Trả về dữ liệu dưới dạng JSON
             return response()->json($jobs);
         }
+
+        public function getJobDetails($jobId)
+{
+    $job = PostJob::find($jobId);
+    
+    // Định dạng ngày tháng năm
+    $formattedDate = Carbon::parse($job->created_at)->format('Y-m-d'); // Lấy ngày, tháng, năm (YYYY-MM-DD)
+    
+    return view('job.details', compact('job', 'formattedDate'));
+}
 
 }

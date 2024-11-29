@@ -9,7 +9,7 @@ const cx = classNames.bind(styles);
 // eslint-disable-next-line react/prop-types
 function JobCardFake({ src, name, address, position, shortdecr1, shortdecr2, shortdecr3, decription, onClick, onApplyClick }) {
     return (
-        <div className={cx("container")}  onClick={onClick} >
+        <div className={cx("container")} onClick={onClick}>
             <div className={cx("header")}>
                 <div className={cx("wrapper")}>
                     <Image  

@@ -46,6 +46,7 @@ class StorePostJobRequest extends FormRequest
             'created_at' => 'nullable|date',
             'contact_email' => 'required|email',
             'contact_phone' => 'nullable|string',
+            'expires_at' => 'nullable|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }

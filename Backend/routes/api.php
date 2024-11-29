@@ -23,11 +23,11 @@ Route::get('/jobs', [PostJobController::class, 'index']);
 
 Route::post('/jobs', [PostJobController::class, 'store']);
 
-// Route::get('/jobs/{id}', [PostJobController::class, 'show']);
+Route::get('/jobs/{id}', [PostJobController::class, 'show']);
 
 Route::post('/jobedit/{id}', [PostJobController::class, 'update']);
 
-Route::delete('/jobs/{id}', [PostJobController::class, 'destroy']);
+ Route::delete('/jobs/delete/{id}', [PostJobController::class, 'destroy']);
 
 Route::post('/jobs/YourPosted', [PostJobController::class, 'getUserPostedJobs']);
 
@@ -91,6 +91,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/applications', [ApplicationController::class, 'store']);
     Route::get('/notifications', [ApplicationController::class, 'getNotifications']);
     Route::get('/applications', [ApplicationController::class, 'index']);
+    Route::get('/getJobApplied/{id}', [ApplicationController::class, 'getAppliedJobs']);
 
     
 });

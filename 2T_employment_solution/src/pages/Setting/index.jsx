@@ -1,22 +1,23 @@
 import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import classNames from "classnames/bind";
 import { Link } from "react-router-dom";
 import Modal from "react-modal";
-import { FaCamera } from "react-icons/fa"; // Import biểu tượng máy ảnh từ react-icons
+import { FaCamera, FaSignOutAlt, FaCog } from "react-icons/fa";
 import styles from "./Setting.module.scss";
 import Image from "~/components/Image";
 import Button from "~/components/Button";
-import { FaSignOutAlt, FaCog } from "react-icons/fa";
 import { AppContext } from "~/Context/AppContext";
 import axios from "axios";
+import images from "~/assets/images";
+
 
 const cx = classNames.bind(styles);
 
-Modal.setAppElement("#root"); // Thiết lập phần tử gốc cho modal
+Modal.setAppElement("#root");
 
 function Setting() {
   const { user, setUser, token } = useContext(AppContext);
-
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
   const [passwordModalIsOpen, setPasswordModalIsOpen] = useState(false);
   const [avatarModalIsOpen, setAvatarModalIsOpen] = useState(false);
@@ -25,70 +26,34 @@ function Setting() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirmation, setNewPasswordConfirmation] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/api/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.user);
-        } else {
-          console.error("Failed to fetch user data");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    if (!user && token) {
-      fetchUserData();
+    if (!token) {
+      alert("Bạn cần đăng nhập để truy cập trang này!");
+      navigate("/login");
     }
-  }, [token, user, setUser]);
+  }, [token]);
 
-  const openPasswordModal = () => {
-    setPasswordModalIsOpen(true);
-  };
+  const openPasswordModal = () => setPasswordModalIsOpen(true);
+  const closePasswordModal = () => setPasswordModalIsOpen(false);
+  const openDeleteModal = () => setDeleteModalIsOpen(true);
+  const closeDeleteModal = () => setDeleteModalIsOpen(false);
 
-  const closePasswordModal = () => {
-    setPasswordModalIsOpen(false);
-  };
-
-  const openDeleteModal = () => {
-    setDeleteModalIsOpen(true);
-  };
-
-  const closeDeleteModal = () => {
-    setDeleteModalIsOpen(false);
-  };
-
-  const HandleDelete = (e) => {
-    e.preventDefault();
-    alert("Tài khoản đã được xóa!");
-    closePasswordModal();
-  };
-
-  const avatarOpenModal = () => {
-    setAvatarModalIsOpen(true);
-  };
-
+  const avatarOpenModal = () => setAvatarModalIsOpen(true);
   const avatarCloseModal = () => {
     setAvatarModalIsOpen(false);
     setAvatarPreview(null);
   };
 
+  const HandleDelete = async (e) => {}
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result); // Update avatar preview
-      };
+      reader.onloadend = () => setAvatarPreview(reader.result);
       reader.readAsDataURL(file);
     } else {
       alert("Vui lòng chọn một tệp ảnh!");
@@ -97,6 +62,7 @@ function Setting() {
 
   const handleAvatarChange = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
 
     const formData = new FormData();
     formData.append("avatar", event.target.avatarInput.files[0]);
@@ -122,66 +88,76 @@ function Setting() {
     } catch (error) {
       console.error("Lỗi khi thay đổi avatar:", error);
       alert("Có lỗi xảy ra. Vui lòng thử lại!");
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
   };
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
     setError('');
-
-    // Kiểm tra mật khẩu mới và mật khẩu xác nhận có trùng khớp
     if (newPassword !== newPasswordConfirmation) {
-      setError("New password and confirmation do not match.");
+      setError("Mật khẩu mới và xác nhận mật khẩu không khớp.");
       return;
     }
+    setIsLoading(true);
 
     try {
-      console.log(user)
-      console.log(currentPassword)
-      console.log(newPassword)
-      console.log(newPasswordConfirmation)
-      setUser((prevUser) => ({ ...prevUser }));
       const res = await axios.post(
         "http://localhost:8000/api/user/changePassword",
         {
           password: currentPassword,
           new_password: newPassword,
           new_password_confirmation: newPasswordConfirmation,
-          user
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         }
       );
-    
       
       if (res.status === 200) {
-        alert("Password successfully updated!");
-        closePasswordModal(); // Đóng modal sau khi thành công
+        alert("Mật khẩu đã được thay đổi thành công!");
+        closePasswordModal(); // Close modal after success
       }
     } catch (error) {
       if (error.response) {
-        setError(error.response.data.message || "An error occurred");
+        setError(error.response.data.message || "Có lỗi xảy ra.");
       } else {
-        setError("An error occurred. Please try again later.");
+        setError("Có lỗi xảy ra. Vui lòng thử lại sau.");
       }
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
   };
 
   return (
     <div className={cx("setting-container")}>
-      <div className={"setting"}>
+      <div className={cx("setting-header")}>
         <h1>
           <FaCog className={cx("iconSetting")} />
+          Settings
         </h1>
       </div>
-      <div className={cx("section")}>
+      <div className={cx("setting-body")}>
         <div className={cx("avatar-section")}>
           <div className={cx("avatar-container")} onClick={avatarOpenModal}>
-            <Image className={cx("profile-avatar")} src={user.avatar} alt="User Avatar" />
+          {user ? (
+            <Image
+              className={cx("profile-avatar")}
+              src={user.avatar || images.dafaultAvatar}
+              alt="User Avatar"
+              onError={(e) => (e.target.src = images.dafaultAvatar)}
+            />
+          ) : (
+            <Image
+              className={cx("profile-avatar")}
+              src={images.dafaultAvatar}
+              alt="Default Avatar"
+            />
+          )}
             <div className={cx("camera-icon")}>
               <FaCamera />
             </div>
@@ -190,7 +166,27 @@ function Setting() {
             Change Avatar
           </Button>
         </div>
-        <div className={cx("sectionRight")}>
+        {/* <div className={cx("profile-section")}>
+          <h2>Change Password</h2>
+          <Button className={cx("change-password-button")} onClick={openPasswordModal}>
+            Change Password
+          </Button>
+        </div>
+        <div className={cx("profile-section")}>
+          <Link to="/profile">
+            <Button className={cx("go-to-profile-button")}>Go to Profile</Button>
+          </Link>
+        </div>
+        <div className={cx("delete-section")} onClick={openDeleteModal}>
+          <Button className={cx("delete-account-button")}>Delete Account</Button>
+        </div>
+      </div>
+
+      <Link to="/logout" className={cx("logout-button")}>
+        <FaSignOutAlt className={cx("icon")} />
+        Logout
+      </Link> */}
+      <div className={cx("sectionRight")}>
           <div className={cx("password-section")}>
             <h2>Change Password:</h2>
             <Button className={cx("change-password-button")} onClick={openPasswordModal}>
@@ -214,53 +210,33 @@ function Setting() {
         Logout
       </Link>
 
-      <Modal
-        isOpen={avatarModalIsOpen}
-        onRequestClose={avatarCloseModal}
-        contentLabel="Thay đổi Avatar"
-        className={cx("modalAvatar")}
-      >
+      {/* Avatar Change Modal */}
+      <Modal isOpen={avatarModalIsOpen} onRequestClose={avatarCloseModal} className={cx("modalAvatar")}>
         <h2>Chọn Avatar Mới</h2>
         <form onSubmit={handleAvatarChange}>
           <div>
             <label htmlFor="avatarInput">Chọn ảnh avatar:</label>
-            <input
-              type="file"
-              id="avatarInput"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
+            <input type="file" id="avatarInput" accept="image/*" onChange={handleFileChange} />
           </div>
           {avatarPreview && (
-            <div style={{ marginTop: "20px" }}>
+            <div className={cx("avatar-preview")}>
               <h4>Preview Avatar:</h4>
-              <img
-                src={avatarPreview}
-                alt="Avatar Preview"
-                width="300"
-                height="300"
-                style={{ borderRadius: "50%" }}
-              />
+              <img src={avatarPreview} alt="Avatar Preview" width="300" height="300" style={{ borderRadius: "50%" }} />
             </div>
           )}
           <div className={cx("groupButton")}>
-            <Button type="submit" disabled={!avatarPreview}>
-              Thay Đổi Avatar
+            <Button type="submit" disabled={!avatarPreview || isLoading}>
+              {isLoading ? "Uploading..." : "Change Avatar"}
             </Button>
             <Button onClick={avatarCloseModal} outline>
-              Đóng
+              Close
             </Button>
           </div>
         </form>
       </Modal>
 
-      <Modal
-        isOpen={passwordModalIsOpen}
-        onRequestClose={closePasswordModal}
-        contentLabel="Change Password"
-        className={cx("modal")}
-        overlayClassName={cx("overlay")}
-      >
+      {/* Change Password Modal */}
+      <Modal isOpen={passwordModalIsOpen} onRequestClose={closePasswordModal} className={cx("modal")}>
         <h2>Change Password</h2>
         <form onSubmit={handleChangePassword}>
           <div className={cx("form-group")}>
@@ -296,13 +272,26 @@ function Setting() {
               onChange={(e) => setNewPasswordConfirmation(e.target.value)}
             />
           </div>
-          <Button type="submit">Save</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Saving..." : "Save Changes"}
+          </Button>
           <Button type="button" onClick={closePasswordModal}>
             Cancel
           </Button>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {error && <p className={cx("error-message")}>{error}</p>}
         </form>
       </Modal>
+
+      {/* Delete Account Modal */}
+      {/* <Modal isOpen={deleteModalIsOpen} onRequestClose={closeDeleteModal} className={cx("modal")}>
+        <h2>Are you sure you want to delete your account?</h2>
+        <div className={cx("groupButton")}>
+          <Button outline onClick={closeDeleteModal}>
+            Cancel
+          </Button>
+          <Button outline>Delete</Button>
+        </div>
+      </Modal> */}
       <Modal
         isOpen={deleteModalIsOpen}
         onRequestClose={closeDeleteModal}
