@@ -14,7 +14,7 @@
 /* Job card layout */
 .jobs {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
@@ -98,8 +98,19 @@ label {
   display: inline-block;
 }
 
+@media (max-width: 1600px) {
+  .jobs {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .jobs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 /* Responsive Design for Mobile */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .modal {
     width: 90%;
     padding: 20px;
@@ -107,6 +118,10 @@ label {
   
   .jobs {
     grid-template-columns: 1fr; /* Single column layout on mobile */
+  }
+  .container{
+    width: 80%;
+    margin: auto;
   }
 }
 .spinner{
@@ -116,3 +131,4 @@ label {
   color: var(--green);
   z-index: 9999999   ;
 } 
+

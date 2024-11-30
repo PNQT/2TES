@@ -83,6 +83,7 @@ const icons = {
   instagram,
   linkedin,
   tele,
+  
 
 };
 

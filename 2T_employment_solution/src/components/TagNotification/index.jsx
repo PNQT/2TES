@@ -11,9 +11,6 @@ function TagNotification({ user, jobName, isUnread, title, id }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const navigate = useNavigate();
 
-
-  
-
   const handleClick = async () => {
     if (modalIsOpen) {
       return; // Do not open the modal if it is already open

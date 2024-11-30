@@ -29,6 +29,33 @@ function Setting() {
   const [isLoading, setIsLoading] = useState(false); // Add loading state
   const navigate = useNavigate();
 
+  async function handleLogout(e) {
+    e.preventDefault();
+
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/api/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(res.data);
+
+      if (res.status === 200) {
+        setUser(null);
+        localStorage.removeItem("token");
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Logout failed:", error.response?.data || error.message);
+      // Optionally display an error message to the user
+    }
+  }
+
   useEffect(() => {
     if (!token) {
       alert("Bạn cần đăng nhập để truy cập trang này!");
@@ -47,7 +74,27 @@ function Setting() {
     setAvatarPreview(null);
   };
 
-  const HandleDelete = async (e) => {}
+  const HandleDelete = async () => {
+    try {
+      // Gửi yêu cầu xóa tài khoản đến API
+      const res = await axios.delete("http://localhost:8000/api/user/delete", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,  
+        },
+      });
+  
+      if (res.status === 200) {
+        alert("Tài khoản đã được xóa thành công!");
+        setUser(null); 
+        localStorage.removeItem("token");
+        navigate("/"); 
+      }
+    } catch (error) {
+      console.error("Delete failed:", error.response?.data || error.message);
+      alert("Xóa tài khoản thất bại. Vui lòng thử lại.");
+    }
+  };
+  
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -205,7 +252,7 @@ function Setting() {
           </div>
         </div>
       </div>
-      <Link to="/logout" className={cx("menuItem", "logout")}>
+      <Link to="/logout" className={cx("menuItem", "logout")} onClick={handleLogout}>
         <FaSignOutAlt className={cx("icon")} />
         Logout
       </Link>

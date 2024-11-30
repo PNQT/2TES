@@ -193,5 +193,9 @@ class PostJobController extends Controller
     
     return view('job.details', compact('job', 'formattedDate'));
 }
-
+       
+      public function countJobs($name){
+        $count = PostJob::where('title', 'like', '%' . $name . '%')->count();
+        return response()->json($count);
+      }
 }
