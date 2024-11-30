@@ -232,6 +232,23 @@
 
         }
 
+        .buttonNotifi{
+            position:absolute;
+            width: 9rem;
+            display: flex;
+            height: 3.5rem;
+            padding: 0.5rem 1rem;
+            flex: 1 0 0;
+            top: 120px;
+            right: -2.25rem;
+ 
+            &:hover {
+                cursor: pointer ;
+                scale: 1.2;
+                color: var(--green);
+            }
+        }
+
 
     }
     

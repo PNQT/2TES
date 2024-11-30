@@ -6,6 +6,8 @@ import Button from "~/components/Button";
 import { FaRegEye } from "react-icons/fa";
 import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
+import { Link } from "react-router-dom";
+import routesConfig from "~/config/routes";
 
 const cx = classNames.bind  (styles);
 
@@ -110,7 +112,7 @@ export default function Login() {
 
           {errors.password && <p className={cx("error")}>Make sure your password contains at least 6 characters and 1 number.</p>}
         </div>
-        <div className={cx("formforget")}>Forget password?</div>
+        <Link to={routesConfig.sendemail} className={cx("formforget")}>Forget password?</Link>
         {/* Display general error */}
         {errors.general && <p className={cx("error")}>{errors.general[0]}</p>}
 

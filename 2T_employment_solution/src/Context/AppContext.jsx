@@ -8,6 +8,7 @@ export default function AppProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [user, setUser] = useState(null);
   const [user_id, setUser_id] = useState(null);
+  const [hasNewUpdates, setHasNewUpdates] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Trạng thái tải
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function AppProvider({ children }) {
   }, [token]);
 
   return (
-    <AppContext.Provider value={{ token, setToken, user, setUser, isLoading ,user_id }}>
+    <AppContext.Provider value={{ token, setToken, user, setUser, isLoading ,user_id ,hasNewUpdates, setHasNewUpdates}}>
       {children}
     </AppContext.Provider>
   );

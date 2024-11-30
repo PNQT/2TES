@@ -1,13 +1,20 @@
-import { useState, useEffect, useContext } from "react";
-import styles from "./PostJob.module.scss";
+import { useEffect, useState, useContext } from "react";
 import classNames from "classnames/bind";
 import axios from "axios";
 import Button from "~/components/Button";
 import { AppContext } from "~/Context/AppContext";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import styles from "./PostJob.module.scss";
 
 const cx = classNames.bind(styles);
 
 function PostJob() {
+
+  useEffect(() => {
+    AOS.init(); 
+  }, []);
+
   const { user } = useContext(AppContext);
   const [currentStep, setCurrentStep] = useState(1); 
   const [formData, setFormData] = useState({
@@ -26,6 +33,8 @@ function PostJob() {
     image: null,
 
   });
+
+  
 
   const [isEmployer, setIsEmployer] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -219,11 +228,11 @@ function PostJob() {
 
   return (
     <div className={cx("form-container")}>
-      <h2 className={cx("title")}> Posting Job</h2>
+      <h2 className={cx("title")} data-aos="fade-up" data-aos-delay="200"> Posting Job</h2>
       {!isEmployer && <div className={cx("error-message")}>{errorMessage}</div>}
       {isEmployer && (
         <>
-          <div className={cx("progress-bar")}>
+          <div className={cx("progress-bar")} data-aos="fade-up" data-aos-delay="700">
             <div className={cx("step", currentStep >= 1 && "active")}>
               <div className={cx("circle")}>{currentStep > 1 ? "✔" : "1"}</div>
               <span>Job Details</span>
@@ -240,7 +249,7 @@ function PostJob() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} data-aos="fade-up" data-aos-delay="1200">
             {renderStep()}
             <div className={cx("buttons")}>
               {currentStep > 1 && (

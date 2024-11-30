@@ -7,6 +7,7 @@ import styles from "./YourPosted.module.scss";
 import { AppContext } from "~/Context/AppContext";
 import { ClipLoader } from "react-spinners";
 import classNames from "classnames/bind";
+import { toast } from "react-toastify";
 const cx = classNames.bind(styles);
 Modal.setAppElement("#root");
 
@@ -18,7 +19,11 @@ function YourPosted() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [editData, setEditData] = useState({});
   
-  const { user, user_id ,token } = useContext(AppContext);
+  const [applicantData, setApplicantData] = useState(null);
+  const [applicantModalIsOpen, setApplicantModalIsOpen] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false); // Loading state for actions
+  
+  const { user, user_id, token } = useContext(AppContext);
   const API_URL = "http://localhost:8000/api";
 
   // Fetch posted jobs on initial render
@@ -45,7 +50,7 @@ function YourPosted() {
     };
 
     fetchPostedJobs();
-  }, [user,token]);
+  }, [user, token]);
 
   // Update job details in the form
   const handleEditClick = (job) => {
@@ -59,15 +64,15 @@ function YourPosted() {
     setLoading(true); // Set loading to true while saving
     const formData = new FormData();
 
-     Object.keys(editData).forEach((key) => {
-  if (
-    editData[key] !== null &&
-    editData[key] !== "" &&
-    !["created_at", "updated_at", "employer_id", "posted_at", "image", "job_id"].includes(key)
-  ) {
-    formData.append(key, editData[key]);
-  }
-});   
+    Object.keys(editData).forEach((key) => {
+      if (
+        editData[key] !== null &&
+        editData[key] !== "" &&
+        !["created_at", "updated_at", "employer_id", "posted_at", "image", "job_id"].includes(key)
+      ) {
+        formData.append(key, editData[key]);
+      }
+    });   
     try {
       const response = await axios.post(
         `${API_URL}/jobedit/${selectedJob.job_id}`,
@@ -118,6 +123,95 @@ function YourPosted() {
     }
   };
 
+  const handleCheckClick = async (jobId) => {
+    console.log(jobId)
+     try { 
+      const res = await axios.get(`${API_URL}/getJobApplicants/${jobId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (res.status === 200) {
+          console.log("Applicants fetched successfully");
+          const applicantsWithStatus = res.data.map(applicant => ({
+            ...applicant,
+            review_status: applicant.review_status || 'pending',
+          }));
+          setApplicantData(applicantsWithStatus); // Store the retrieved data with default status
+          setApplicantModalIsOpen(true); // Open the modal
+        }
+        else{
+          console.log("Failed to fetch applicants");
+        }
+
+        }
+      catch (error) {
+      setErrorMessage("Could not fetch applicants.");
+      console.error("Error fetching applicants:", error);
+    }
+  }
+
+  const handleApprove = async (applicationId) => {
+    setActionLoading(true); // Start loading
+    try {
+      const res = await axios.post(
+        `${API_URL}/application/approve/${applicationId}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status === 200) {
+        setApplicantData(applicantData.map(app => 
+          app.application_id === applicationId ? { ...app, review_status: 'approved' } : app
+        ));
+        console.log("Application approved successfully");
+        toast.success("Ứng viên đã được duyệt thành công!");
+      }
+      else{
+        toast.error("Duyệt ứng viên thất bại.");
+      }
+    } catch (error) {
+      console.error("Error approving application:", error);
+      toast.error("Có lỗi xảy ra khi duyệt ứng viên.");
+    } finally {
+      setActionLoading(false); // End loading
+    }
+  };
+  
+  const handleReject = async (applicationId) => {
+    setActionLoading(true); // Start loading
+    try {
+      const res = await axios.post(
+        `${API_URL}/application/reject/${applicationId}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status === 200) {
+        setApplicantData(applicantData.map(app => 
+          app.application_id === applicationId ? { ...app, review_status: 'rejected' } : app
+        ));
+        console.log("Application rejected successfully");
+        toast.info("Ứng viên đã bị từ chối.");
+      }
+      else{
+        toast.error("Từ chối ứng viên thất bại.");
+      }
+    } catch (error) {
+      console.error("Error rejecting application:", error);
+      toast.error("Có lỗi xảy ra khi từ chối ứng viên.");
+    } finally {
+      setActionLoading(false); // End loading
+    }
+  };
+
   return (
     <div className={cx("container")}>
       <h1 className={cx("title")}>Your Posted Jobs</h1>
@@ -143,6 +237,8 @@ function YourPosted() {
               hideFooter
               onEditClick={() => handleEditClick(job)}
               onDeleteClick={() => handleDeleteClick(job.job_id)}
+              onCheckClick={() => handleCheckClick(job.job_id)}
+              className={cx("job")}
             />
           ))
         ) : (
@@ -220,7 +316,10 @@ function YourPosted() {
 
           <div>
             {loading ? (
-              <p>Saving...</p> // Show saving text while saving job
+             <>
+                <ClipLoader className={cx("spinner")} />
+                <p>Saving...</p>
+             </> // Show saving text while saving job
             ) : (
               <>
                 <Button onClick={handleSaveEdit}>Save Changes</Button>
@@ -235,6 +334,74 @@ function YourPosted() {
           </div>
         </div>
       </Modal>
+
+      {/* Modal for confirming delete (Optional: Improve functionality) */}
+      <Modal>
+        <div>
+          <h2>Are you sure you want to delete this job?</h2>
+          <Button onClick={() => setModalIsOpen(false)}>No</Button>
+          <Button onClick={() => setModalIsOpen(false)}>Yes</Button>
+        </div>
+      </Modal>
+
+      {/* Modal for displaying applicants */}
+      <Modal
+        isOpen={applicantModalIsOpen}
+        onRequestClose={() => setApplicantModalIsOpen(false)}
+        contentLabel="Applicants Details"
+        className={cx("modal")}
+        overlayClassName={cx("overlay")}
+      >
+        <div>
+          <h2>Applicants for {selectedJob?.title}</h2>
+          {applicantData && applicantData.length > 0 ? (
+            <ul>
+              {applicantData.map((applicant, index) => (
+                <li key={index}>
+                  <h5>Applicant {index + 1}</h5>
+                  <p><strong>Name:</strong> {applicant.user_name}</p>
+                  <p><strong>Email:</strong> {applicant.email}</p>
+                  <p><strong>Cover Letter:</strong> {applicant.cover_letter}</p>
+                  <p><strong>Resume :</strong> {applicant.resume_path}</p>
+                  <p><strong>Applied at:</strong> {applicant.applied_at}</p>      
+                  <p>
+                    <strong>Status:</strong>
+                    <span className={cx(`status-${applicant.review_status || 'pending'}`)}>
+                      {applicant.review_status
+                        ? applicant.review_status.charAt(0).toUpperCase() + applicant.review_status.slice(1)
+                        : 'Pending'}
+                    </span>
+                  </p>
+                  <div>
+                    {actionLoading ? (
+                      <ClipLoader className={cx("spinner")} />
+                    ) : (
+                      <>
+                        <Button 
+                          onClick={() => handleApprove(applicant.application_id)}
+                           disabled={applicant.review_status === "approved"}
+                        >
+                          Approve
+                        </Button>
+                        <Button 
+                          onClick={() => handleReject(applicant.application_id)}
+                          disabled={applicant.review_status === "rejected"}
+                        >
+                          Reject
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No applicants found for this job.</p>
+          )}
+          <Button onClick={() => setApplicantModalIsOpen(false)}>Close</Button>
+        </div>
+      </Modal>
+
     </div>
   );
 }

@@ -10,6 +10,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { IoReturnDownBackOutline, IoBag, IoTime } from "react-icons/io5";
 import { MdEdit, MdDeleteForever } from "react-icons/md";
 import { RiMoneyDollarCircleFill } from "react-icons/ri";
+import { IoMdNotificationsOutline } from "react-icons/io";
 
 const cx = classNames.bind(styles);
 
@@ -27,12 +28,14 @@ function JobCard({
   decription,
   details,
   user,
-  job_id,
   token,
   hideFooter,
   onEditClick,
   onDeleteClick,
+  onCheckClick,
+  className,
   days,
+  ...props
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false); // Modal hiển thị chi tiết công việc
   const [applyModalIsOpen, setApplyModalIsOpen] = useState(false); // Modal Apply // Lấy user và token từ context
@@ -208,7 +211,7 @@ function JobCard({
     }
   };
   return (
-    <div className={cx("container")}>
+    <div className={cx("container")} {...props} >
       <div className={cx("header")}>
         <div className={cx("wrapper")}>
           <Image className={cx("logo")} src={src} />
@@ -271,6 +274,8 @@ function JobCard({
           <>
             <MdEdit className={cx("buttonEdit")} onClick={onEditClick} />
             <MdDeleteForever className={cx("buttonDelete")} onClick={onDeleteClick} />
+            <IoMdNotificationsOutline  className={cx("buttonNotifi")} onClick={onCheckClick}/>
+
           </>
         ) : (
           <>

@@ -19,7 +19,6 @@ function Notification() {
   const [names, setNames] = useState({});
   const [selectedNotification, setSelectedNotification] = useState(null);
   const { user_id } = useContext(AppContext);
-
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!user_id) return;
@@ -116,7 +115,7 @@ function Notification() {
                       job_id={notification.job_id}
                       poster_id={notification.poster_id}
                       title="Đã Nộp Hồ Sơ Ứng Tuyển Cho Công Việc"
-                      bin={notification.application_id}
+                      id={notification.application_id}
                     />
                   </div>
                 ))
