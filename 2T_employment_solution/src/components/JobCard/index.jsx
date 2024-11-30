@@ -29,24 +29,18 @@ function JobCard({
   details,
   user,
   token,
-  hideFooter,
-  onEditClick,
-  onDeleteClick,
-  onCheckClick,
   className,
   days,
   ...props
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false); // Modal hiển thị chi tiết công việc
   const [applyModalIsOpen, setApplyModalIsOpen] = useState(false); // Modal Apply // Lấy user và token từ context
-  const [isSaved, setIsSaved] = useState(false);
-  // const [selectedJob, setSelectedJob] = useState(null);
+  const [isSaved, setIsSaved] = useState(undefined);
   const [employerInfo, setEmployerInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [resume, setResume] = useState(""); // Trạng thái Resume
   const [cvFile, setCvFile] = useState(null);
   const employerCache = {};
-  // Step Management Reducer
   const initialState = { step: 1, progressPercentage: 30 };
   const totalSteps = 3;
   //
@@ -85,47 +79,43 @@ function JobCard({
             Authorization: `Bearer ${token}`,
           },
         });
-        setIsSaved(response.data.isSaved); // API trả về { isSaved: true/false }
+
+        setIsSaved(response.data.isSaved);
       } catch (error) {
         console.error("Failed to check saved status:", error);
+      } finally {
+        setIsLoading(false); // Set loading to false after fetching
       }
     };
 
     checkSavedStatus();
   }, [details.job_id, user.user_id, token]);
+  
 
   const handleSave = async () => {
     try {
-      if (!isSaved) {
-        await axios.post(
-          `${API_URL}/saved_job`,
-          { job_id: details.job_id, user_id: user.user_id },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log("Job saved!");
-      } else {
-        await axios.delete(
-          `${API_URL}/saved_job`,
-          {
-            data: { job_id: details.job_id, user_id: user.user_id },
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log("Job unsaved!");
-      }
-      setIsSaved(!isSaved);
+      setIsSaved((prevState) => !prevState);
+  
+      const url = `${API_URL}/saved_job`;
+      const method = isSaved ? 'delete' : 'post';
+      const payload = { job_id: details.job_id, user_id: user.user_id };
+  
+      await axios({
+        method,
+        url,
+        data: payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      console.log(isSaved ? "Job unsaved!" : "Job saved!");
     } catch (error) {
       console.error("Failed to toggle saved status:", error);
+      setIsSaved((prevState) => !prevState);
     }
   };
+  
 
   // Open Job Details Modal
   const openModal = (details) => {
@@ -230,7 +220,7 @@ function JobCard({
       {/* Icon Save with onClick handler */}
       <div className={cx("saveIcon")} onClick={handleSave}>
         <img
-          src={isSaved ? icons.saved : icons.save} // Toggle giữa save và saved icon
+          src={isSaved ? icons.saved : icons.save} 
           className={cx("save")}
         />
       </div>
@@ -270,14 +260,6 @@ function JobCard({
       </div>
 
       <div className={cx("footer")}>
-        {hideFooter ? (
-          <>
-            <MdEdit className={cx("buttonEdit")} onClick={onEditClick} />
-            <MdDeleteForever className={cx("buttonDelete")} onClick={onDeleteClick} />
-            <IoMdNotificationsOutline  className={cx("buttonNotifi")} onClick={onCheckClick}/>
-
-          </>
-        ) : (
           <>
             <Button className={cx("buttonApply")} onClick={() => openApplyModal(details)}>
               Apply
@@ -286,7 +268,6 @@ function JobCard({
               Read More
             </Button>
           </>
-        )}
       </div>
 
       {/* Modal Hiển thị Chi Tiết Công Việc */}

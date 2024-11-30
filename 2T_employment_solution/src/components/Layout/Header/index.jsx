@@ -237,7 +237,7 @@ function Header() {
             className={cx("menuItemHamberger")}
             onClick={() => setIsMenuOpen(false)}
           >
-            Apply
+            Applied Job
           </Link>
           <Link
             to={routesConfig.post}
@@ -251,12 +251,45 @@ function Header() {
             className={cx("menuItemHamberger")}
             onClick={() => setIsMenuOpen(false)}
           >
-            Categories Jobs
+            Jobs
           </Link>
+          <Link
+            to={routesConfig.profile}
+            className={cx("menuItemHamberger")}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Profile
+          </Link>
+          <Link
+            to={routesConfig.setting}
+            className={cx("menuItemHamberger")}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Setting
+          </Link>
+          <Link
+            to={routesConfig.yourposted}
+            className={cx("menuItemHamberger")}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            your posted
+          </Link>
+          <Link
+            to={routesConfig.yoursaved}
+            className={cx("menuItemHamberger")}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Your saved
+          </Link>
+          <Link onClick={handleLogout}>
+            Logout
+          </Link> 
+
+
           {!user && (
             <>
               <Link
-                to="/signup"
+                to="/register"
                 className={cx("menuItem")}
                 onClick={() => setIsMenuOpen(false)}
               >

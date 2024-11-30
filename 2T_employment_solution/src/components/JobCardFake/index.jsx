@@ -7,7 +7,7 @@ import Button from "~/components/Button";
 const cx = classNames.bind(styles);
 
 // eslint-disable-next-line react/prop-types
-function JobCardFake({ src, name, address, position, shortdecr1, shortdecr2, shortdecr3, decription, onClick, onApplyClick }) {
+function JobCardFake({ src, name, address, position, shortdecr1, shortdecr2, shortdecr3, decription, onClick }) {
     return (
         <div className={cx("container")} onClick={onClick}>
             <div className={cx("header")}>
@@ -50,8 +50,9 @@ function JobCardFake({ src, name, address, position, shortdecr1, shortdecr2, sho
             </div>
             <div className={cx("footer")}>
                 {/* Add onApplyClick here to trigger Apply modal */}
-                <Button className={cx("buttonApply")} onClick={onApplyClick}>Apply</Button>
-                <Button className={cx("buttonReadMore")} onClick={onClick} outline>Read More</Button>
+                {/* <Button className={cx("buttonApply")} onClick={onApplyClick}>Apply</Button>
+                <Button className={cx("buttonReadMore")} onClick={onClick} outline>Read More</Button> */}
+                <Button className={cx("buttonReadMore")} outline>View</Button>
             </div>
         </div>
     );

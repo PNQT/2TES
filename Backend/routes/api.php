@@ -34,6 +34,7 @@ Route::post('/jobs/YourPosted', [PostJobController::class, 'getUserPostedJobs'])
 
 
  Route::post('/jobdelete/{id}', [PostJobController::class, 'destroy']);
+ Route::get('/count/{name}',[PostJobController::class, 'countJobs']);
 
 
 Route::get('/saved_job/check', [SavedJobController::class, 'check']);
@@ -72,6 +73,9 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::delete('/account/delete', [AuthController::class, 'deleteAccount']);
+
+
 
 Route::post('/password/email', [ResetPasswordController::class, 'sendResetLinkEmail']);  // Route gửi email
 Route::post('/password/reset', [ResetPasswordController::class, 'resetPassword']); 

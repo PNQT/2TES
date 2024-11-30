@@ -100,4 +100,29 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
+
+public function deleteAccount(Request $request)
+{
+    // Lấy người dùng hiện tại
+    $user = $request->user();
+
+    if (!$user) {
+        return response()->json(['message' => 'User not found.'], 404);
+    }
+
+    // Kiểm tra mật khẩu người dùng nhập vào
+    $password = $request->input('password'); // Nhận mật khẩu từ request
+
+    if (!Hash::check($password, $user->password)) {
+        return response()->json(['message' => 'Incorrect password.'], 401); // Nếu mật khẩu sai
+    }
+
+    // Xóa tài khoản
+    $user->delete();
+
+    return response()->json([
+        'message' => 'Account successfully deleted!',
+    ]);
+}
+
 }

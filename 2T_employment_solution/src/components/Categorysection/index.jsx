@@ -1,88 +1,89 @@
-   import Category from "~/components/Category";
-   import icons from "~/assets/icons";
-   // import Image from "~/components/Image";
-   import classNames from "classnames/bind";
-   import styles from "./CategorySection.module.scss";
+import { useEffect, useState } from "react";
+import classNames from "classnames/bind";
+import styles from "./CategorySection.module.scss";
+import Category from "../Category";
+import icons from "~/assets/icons";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-   const cx = classNames.bind(styles);
-   function CategorySection() {
-      return ( 
-         <section className={cx("container")}>
-               <div className={cx("header")} data-aos="fade-up" data-aos-anchor-placement="top-center" data-aos-delay="500" >
-                  <p className={cx("titleCenter")}>
-                  Browse By Category
-                  </p>
-                  <p className={cx("decriptions")}>
-                  You can locate the category in which your dream job can be found! 
-                  </p>
-               </div>
-               <div className={cx("categories")}>
-                  <Category 
-                  src={icons.estate}
-                  name="Real Estate Jobs"
-                  description="70 Jobs Available"
-                  data-aos="fade-right"
-                  data-aos-delay="500"
-                  />
-                  <Category 
-                  src={icons.hospital}
-                  name="Hospital jobs"
-                  description="50 Jobs Available"
-                  data-aos="fade-right"
-                  data-aos-delay="800"
-                  />
-                  <Category 
-                  src={icons.construction}
-                  name="Construction Jobs"
-                  description="45 Jobs Available"
-                  data-aos="fade-left"
-                  data-aos-delay="1100"
-                  />
-                  <Category 
-                  src={icons.accounting}
-                  name="Accounting Jobs"
-                  description="23 Jobs Available"
-                  data-aos="fade-left"
-                  data-aos-delay="1400"
-                  />
-                  <Category 
-                  src={icons.design_creative}
-                  name="Design & Creative Jobs"
-                  description="15 Jobs Available"
-                  data-aos="fade-right"
-                  data-aos-delay="1700" 
-                  />
-                  <Category 
-                  src={icons.fashion}
-                  name="Fashion Jobs"
-                  description="45 Jobs Available"
-                  data-aos="fade-right"
-                  data-aos-delay="2000"
-                  />
-                  <Category 
-                  src={icons.it_telecom}
-                  name="IT & Telecom Jobs"
-                  description="45 Jobs Available"
-                  data-aos="fade-left"
-                  data-aos-delay="2300" 
-                  />
-                  <Category 
-                  src={icons.shipping}
-                  name="Shipping Jobs"
-                  description="23 Jobs Available"
-                  data-aos="fade-left"
-                  data-aos-delay="2600" 
-                  />
+const cx = classNames.bind(styles);
 
-               </div>
-               {/* <div className={cx("fordwardAndBck")}>
-                  <Image className={cx("arrowLeft")} src={icons.arrow_left}></Image>
-                  <Image className={cx("arrowRight")}src={icons.arrow_right}></Image>
+const categories = [
+  { name: "Real Estate Jobs", icon: icons.estate },
+  { name: "Hospital jobs", icon: icons.hospital },
+  { name: "Construction Jobs", icon: icons.constructor },
+  { name: "Accounting Jobs", icon: icons.accounting },
+  { name: "Design & Creative Jobs", icon: icons.design },
+  { name: "Fashion Jobs", icon: icons.fashion },
+  { name: "IT & Telecom Jobs", icon: icons.it },
+  { name: "Shipping Jobs", icon: icons.shipper },
+];
+ 
+function CategorySection() {
+  const [jobCounts, setJobCounts] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-               </div> */}
-         </section>
-         
-      );
-   }
+  useEffect(() => {
+    const fetchJobCounts = async () => {
+      try {
+        const counts = {};
+        for (const category of categories) {
+          const response = await axios.get(`http://localhost:8000/api/count/${category.name}`);
+          counts[category.name] = response.data;
+        }
+        setJobCounts(counts);
+      } catch (err) {
+        console.error("Failed to fetch job counts:", err);
+        setError("Failed to load job counts. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-   export default CategorySection;
+    fetchJobCounts();
+  }, []);
+  const handleCategoryClick = (categoryName) => {
+   navigate(`/categories?query=${categoryName}`);
+ };
+    
+  
+
+  return (
+    <section className={cx("container")}>
+      <div
+        className={cx("header")}
+        data-aos="fade-up"
+        data-aos-anchor-placement="top-center"
+        data-aos-delay="500"
+      >
+        <p className={cx("titleCenter")}>Browse By Category</p>
+        <p className={cx("descriptions")}>
+          You can locate the category in which your dream job can be found!
+        </p>
+      </div>
+      <div className={cx("categories")}>
+        {loading ? (
+          <p>Loading categories...</p>
+        ) : error ? (
+          <p className={cx("error")}>{error}</p>
+        ) : (
+          categories.map((category, index) => (
+            <Category
+              key={index}
+              src={category.icon}
+              name={category.name}
+              description={`${jobCounts[category.name] || 0} Jobs Available`}
+              data-aos={index % 2 === 0 ? "fade-right" : "fade-left"}
+              data-aos-delay={500 + (index > 3 ? (index - 3) * 300 : index * 300)}
+              onClick={() => handleCategoryClick(category.name)} 
+            />
+          ))
+        )}
+      </div>
+    </section>
+  );
+}
+
+export default CategorySection;
