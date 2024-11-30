@@ -92,8 +92,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications', [ApplicationController::class, 'getNotifications']);
     Route::get('/applications', [ApplicationController::class, 'index']);
     Route::get('/getJobApplied/{id}', [ApplicationController::class, 'getAppliedJobs']);
-
-    
+    Route::get('/getJobApplicants/{id}', [ApplicationController::class, 'getJobApplicants']);
+    Route::post('/application/reject/{id}', [ApplicationController::class, 'reject']);
+    Route::post('/application/approve/{id}', [ApplicationController::class, 'approve']);
+    Route::get('/checkReviewStatus/{userId}', [ApplicationController::class, 'checkReviewStatus']);
 });
 
 Route::put('/notifications/{job_id}/{poster_id}/read', [NotificationController::class, 'markAsRead']);

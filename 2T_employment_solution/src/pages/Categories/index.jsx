@@ -10,6 +10,8 @@ import Search from "~/components/Search";
 import ClipLoader from "react-spinners/ClipLoader";
 import { debounce } from "lodash";
 import * as searchServices from "~/apiServices/searchService";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const cx = classNames.bind(styles);
 
@@ -22,23 +24,28 @@ function Categories() {
   const [searchResult, setSearchResult] = useState([]);
   const searchValue = query.get("query");
   const [jobs, setJobs] = useState([]);
-  const [visibleJobsCount, setVisibleJobsCount] = useState(8);
-  const [incrementCount] = useState(8);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const { user, token } = useContext(AppContext);
   const API_URL = "http://localhost:8000/api";
   const navigate = useNavigate();
 
+  useEffect(() => {
+    AOS.init(); 
+  }, []);
+
   const calculateTime = (created_at) => {
     const now = new Date();
     const postTime = new Date(created_at);
 
     const diffInMs = now - postTime;
-    const diffInMinutes = Math.max(Math.floor(diffInMs / (1000 * 60)), 1);
+    let diffInMinutes = Math.floor(diffInMs / (1000 * 60));
     const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
+    if (diffInMinutes === 0) {
+      diffInMinutes = 1;
+    }
     if (diffInMinutes < 60) {
       return `${diffInMinutes} minutes ago`;
     } else if (diffInHours < 24) {
@@ -53,6 +60,7 @@ function Categories() {
     navigate("/login");
   }
 
+  // Fetch job listings
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -71,6 +79,7 @@ function Categories() {
     }
   }, [user]);
 
+  // Handle search
   const fetchSearchResults = debounce(async (query) => {
     setIsLoading(true);
     try {
@@ -78,7 +87,6 @@ function Categories() {
       setSearchResult(results);
     } catch (error) {
       console.error("Error fetching search results:", error);
-      setErrorMessage("Error fetching search results.");
     } finally {
       setIsLoading(false);
     }
@@ -92,19 +100,21 @@ function Categories() {
     fetchSearchResults(searchValue);
   }, [searchValue]);
 
-  const visibleJobs = jobs.slice(0, visibleJobsCount);
 
-  const handleLoadMore = () => {
-    setVisibleJobsCount((prev) => prev + incrementCount);
+  const getAnimationClass = (index) => {
+    const mod = index % 4;
+    if (mod === 3) {
+      return "fade-left";
+    } else if (mod === 2 || mod === 1) {
+      return "zoom-in";
+    } else {
+      return "fade-right";
+    }
   };
 
-  // const hadleRessetCount = () => {
-  //   setVisibleJobsCount(8);
-  // };
-
   const renderJobCards = (jobs) =>
-    jobs.map((job) => (
-      <div key={job.job_id} className={cx("jobs")}>
+    jobs.map((job, index) => (
+      <div key={job.job_id} className={cx("jobs")} data-aos={getAnimationClass(index)}>
         <JobCard
           src={`http://localhost:8000/${job.image}`}
           name={job.title}
@@ -113,7 +123,7 @@ function Categories() {
           shortdecr1={job.job_type}
           shortdecr2={job.salary}
           shortdecr3={job.expires_at}
-          decription={job.description}
+          description={job.description}
           details={job}
           user={user}
           job_id={job.job_id}
@@ -123,7 +133,7 @@ function Categories() {
         />
       </div>
     ));
-
+  
   return (
     <div className={cx("container")}>
       <div className={cx("searchResults")}>
@@ -135,42 +145,22 @@ function Categories() {
             <ClipLoader className={cx("spinner")} />
           ) : searchResult.length > 0 ? (
             <div className={cx("wrapper")}>
-              <div className={cx("jobs")}>
+               <div className={cx("jobs")}>
                 {renderJobCards(searchResult)}
                 </div>
-                {visibleJobsCount < jobs.length && (
-                <div className={cx("load-more")}>
-                  <button
-                    onClick={handleLoadMore}
-                    className={cx("load-more-button")}
-                  >
-                    Load-More
-                  </button>
-                </div>
-              )}
-              </div>
+            </div>
           ) : (
             <div className={cx("wrapper")}>
               <h1 className={cx("title")}>Job Listings</h1>
               <div className={cx("jobs")}>
                 {errorMessage ? (
                   <p>{errorMessage}</p>
-                ) : visibleJobs.length > 0 ? (
-                  renderJobCards(visibleJobs)
+                ) : jobs.length > 0 ? (
+                  renderJobCards(jobs)
                 ) : (
                   <p>No jobs available</p>
                 )}
               </div>
-              {visibleJobsCount < jobs.length && (
-                <div className={cx("load-more")}>
-                  <button
-                    onClick={handleLoadMore}
-                    className={cx("load-more-button")}
-                  >
-                    Load-More
-                  </button>
-                </div>
-              )}
             </div>
           )}
         </div>

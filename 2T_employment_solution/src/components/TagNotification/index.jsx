@@ -3,12 +3,14 @@ import styles from "./TagNotification.module.scss";
 import { IoIosNotifications } from "react-icons/io";
 import axios from "axios";
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const cx = classNames.bind(styles);
 
 // eslint-disable-next-line react/prop-types
-function TagNotification({ user, jobName, isUnread, title, bin }) {
+function TagNotification({ user, jobName, isUnread, title, id }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const navigate = useNavigate();
+
 
   
 
@@ -18,11 +20,9 @@ function TagNotification({ user, jobName, isUnread, title, bin }) {
     }
 
     try {
-      setModalIsOpen(true);  // Open the modal
-
-      // Send GET request to mark the notification as read
+      setModalIsOpen(true);
       const res = await axios.get(
-        `http://localhost:8000/api/notifications/${bin}`,
+        `http://localhost:8000/api/notifications/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -32,6 +32,7 @@ function TagNotification({ user, jobName, isUnread, title, bin }) {
 
       if (res.status === 200) {
         console.log("Read notification successfully");
+        navigate('/yourposted');
       } else {
         console.log("Failed to read notification");
       }

@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import styles from './ResetPassword.module.scss';  // Importing the SCSS module
+import classNames from 'classnames/bind';
+import Button from '~/components/Button';  // Import Button component
+
+const cx = classNames.bind(styles);  // Bind class names to the styles
 
 const ResetPassword = () => {
     const [email, setEmail] = useState('');
@@ -12,63 +17,54 @@ const ResetPassword = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedEmail = localStorage.getItem('email');  // Lấy email từ localStorage
+        const storedEmail = localStorage.getItem('email');  // Get email from localStorage
         if (!storedEmail) {
-            navigate('/login'); // Nếu không có email, chuyển hướng về trang login
+            navigate('/login'); // If no email, navigate to login page
         } else {
-            setEmail(storedEmail);  // Điền email vào form nếu có
+            setEmail(storedEmail);  // Set the email in the form if available
         }
     }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!email || !password || !passwordConfirmation || !otp) {
-            setError('Tất cả các trường đều là bắt buộc');
+            setError('All fields are required');
             return;
         }
-
         if (password !== passwordConfirmation) {
-            setError('Mật khẩu xác nhận không khớp');
+            setError('Password confirmation does not match');
             return;
         }
-
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/password/reset', {
                 email,
                 password,
                 otp,
             });
-
-            setMessage(response.data.message);  // Hiển thị thông báo thành công
+            setMessage(response.data.message);  // Show success message
             setError('');
             setTimeout(() => {
-                setMessage(''); // Ẩn thông báo thành công sau 3 giây
+                setMessage(''); // Hide success message after 3 seconds
             }, 3000);
-
             setTimeout(() => {
-                navigate('/login');  // Chuyển đến trang login sau khi thành công
+                navigate('/login');  // Navigate to login page after success
             }, 2000);
-
         } catch (err) {
-            setError(err.response?.data.message || 'Đã có lỗi xảy ra!');
+            setError(err.response?.data.message || 'An error occurred!');
             setMessage('');
         }
     };
 
     return (
-        <div>
-            <h2>Đặt lại mật khẩu</h2>
-
-            {/* Hiển thị thông báo lỗi */}
-            {error && <div style={{ color: 'red' }}>{error}</div>}
-
-            {/* Hiển thị thông báo thành công */}
-            {message && <div style={{ color: 'green' }}>{message}</div>}
-
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="email">Email:</label>
+        <div className={cx('container')}>
+            <h2 className={cx('htitle')}>Reset Password</h2>
+            {/* Display error message */}
+            {error && <div className={cx('error')}>{error}</div>}
+            {/* Display success message */}
+            {message && <div className={cx('success')}>{message}</div>}
+            <form onSubmit={handleSubmit} className={cx('form')}>
+                <div className={cx('form-comp')}>
+                    <label htmlFor="email" className={cx('label')}>Email:</label>
                     <input
                         type="email"
                         id="email"
@@ -76,10 +72,11 @@ const ResetPassword = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        className={cx('input')}
                     />
                 </div>
-                <div>
-                    <label htmlFor="password">Mật khẩu mới:</label>
+                <div className={cx('form-comp')}>
+                    <label htmlFor="password" className={cx('label')}>New Password:</label>
                     <input
                         type="password"
                         id="password"
@@ -87,10 +84,11 @@ const ResetPassword = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        className={cx('input')}
                     />
                 </div>
-                <div>
-                    <label htmlFor="password_confirmation">Xác nhận mật khẩu:</label>
+                <div className={cx('form-comp')}>
+                    <label htmlFor="password_confirmation" className={cx('label')}>Confirm Password:</label>
                     <input
                         type="password"
                         id="password_confirmation"
@@ -98,10 +96,11 @@ const ResetPassword = () => {
                         value={passwordConfirmation}
                         onChange={(e) => setPasswordConfirmation(e.target.value)}
                         required
+                        className={cx('input')}
                     />
                 </div>
-                <div>
-                    <label htmlFor="otp">Mã OTP:</label>
+                <div className={cx('form-comp')}>
+                    <label htmlFor="otp" className={cx('label')}>OTP Code:</label>
                     <input
                         type="text"
                         id="otp"
@@ -109,9 +108,10 @@ const ResetPassword = () => {
                         value={otp}
                         onChange={(e) => setOtp(e.target.value)}
                         required
+                        className={cx('input')}
                     />
                 </div>
-                <button type="submit">Đặt lại mật khẩu</button>
+                <Button type="submit" className={cx('primary-btn')}>Reset Password</Button>
             </form>
         </div>
     );

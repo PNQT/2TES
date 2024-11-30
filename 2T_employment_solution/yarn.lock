@@ -5,11 +5,12 @@
 "2t-employment-solution@file:.":
   version "0.0.0"
   dependencies:
-    "2t-employment-solution" "file:C:/Users/ASUS/AppData/Local/Yarn/Cache/v6/npm-2t-employment-solution-0.0.0-c3da9062-172b-4ab7-bcf5-a12cb3889310-1732888049402/node_modules/2t-employment-solution"
+    "2t-employment-solution" "file:C:/Users/ASUS/AppData/Local/Yarn/Cache/v6/npm-2t-employment-solution-0.0.0-6d8f857b-7203-4de8-bd18-011b23a3f623-1732910382082/node_modules/2t-employment-solution"
     "@testing-library/jest-dom" "^5.14.1"
     "@testing-library/react" "^13.0.0"
     "@testing-library/user-event" "^13.2.1"
     "@tippyjs/react" "^4.2.6"
+    aos "^2.3.4"
     axios "^1.7.7"
     bootstrap "^2.0.0"
     classnames "^2.5.1"
@@ -3679,6 +3680,11 @@ cliui@^7.0.2:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
     wrap-ansi "^7.0.0"
+
+clsx@^2.1.0:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-2.1.1.tgz#eed397c9fd8bd882bfb18deab7102049a2f32999"
+  integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
 
 co@^4.6.0:
   version "4.6.0"
@@ -8683,6 +8689,13 @@ react-spinners@^0.14.1:
   version "0.14.1"
   resolved "https://registry.yarnpkg.com/react-spinners/-/react-spinners-0.14.1.tgz#de7d7d6b3e6d4f29d9620c65495b502c7dd90812"
   integrity sha512-2Izq+qgQ08HTofCVEdcAQCXFEYfqTDdfeDQJeo/HHQiQJD4imOicNLhkfN2eh1NYEWVOX4D9ok2lhuDB0z3Aag==
+
+react-toastify@^10.0.6:
+  version "10.0.6"
+  resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-10.0.6.tgz#19c364b1150f495522c738d592d1dcc93879ade1"
+  integrity sha512-yYjp+omCDf9lhZcrZHKbSq7YMuK0zcYkDFTzfRFgTXkTFHZ1ToxwAonzA4JI5CxA91JpjFLmwEsZEgfYfOqI1A==
+  dependencies:
+    clsx "^2.1.0"
 
 react@^18.3.1:
   version "18.3.1"

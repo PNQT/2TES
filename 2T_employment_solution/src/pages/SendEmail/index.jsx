@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import styles from './SendEmail.module.scss';
+import classNames from 'classnames/bind';
+import Button from '~/components/Button';
+
+const cx = classNames.bind(styles);
 
 const SendEmail = () => {
-  const [email, setEmail] = useState('');  // Khai báo email state
+  const [email, setEmail] = useState('');  // Declare email state
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -12,35 +17,35 @@ const SendEmail = () => {
     e.preventDefault();
 
     if (!email) {
-      setError('Email là bắt buộc');
+      setError('Email is required');
       return;
     }
 
     try {
       localStorage.setItem('email', email);
       const response = await axios.post('http://127.0.0.1:8000/api/password/email', { email });
-      setMessage(response.data.message); // Hiển thị thông báo thành công
+      setMessage(response.data.message); // Show success message
       setError('');
 
-      // Sau khi gửi email thành công, chuyển đến trang reset mật khẩu
+      // After successfully sending the email, navigate to the reset password page
       setTimeout(() => {
-        navigate('/resetpassword');  // Chuyển hướng đến trang reset mật khẩu
-      }, 2000);  // Thời gian chờ (ví dụ 2 giây để người dùng đọc thông báo)
+        navigate('/resetpassword');  // Navigate to the reset password page
+      }, 2000);  // Delay (e.g., 2 seconds for the user to read the message)
     } catch (err) {
-      setError(err.response?.data.message || 'Đã có lỗi xảy ra!');
+      setError(err.response?.data.message || 'An error occurred!');
       setMessage('');
     }
   };
 
   return (
-    <div>
-      <h2>Quên mật khẩu</h2>
+    <div className={cx("send-email-container")}>
+      <h2>Forgot Password</h2>
 
-      {/* Hiển thị thông báo lỗi */}
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+      {/* Show error message */}
+      {error && <div className={cx("error-message")}>{error}</div>}
 
-      {/* Hiển thị thông báo thành công */}
-      {message && <div style={{ color: 'green' }}>{message}</div>}
+      {/* Show success message */}
+      {message && <div className={cx("success-message")}>{message}</div>}
 
       <form onSubmit={handleSubmit}>
         <div>
@@ -50,11 +55,11 @@ const SendEmail = () => {
             id="email"
             name="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}  // Cập nhật giá trị email
+            onChange={(e) => setEmail(e.target.value)}  
             required
           />
         </div>
-        <button type="submit">Gửi link đặt lại mật khẩu</button>
+        <Button type="submit" outline>Send Password Reset Link</Button>
       </form>
     </div>
   );

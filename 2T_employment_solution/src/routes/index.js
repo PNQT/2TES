@@ -13,6 +13,7 @@ import { DefaultLayout } from '~/components/Layout';
 import routesConfig from "~/config/routes"
 import YourPosted from '~/pages/YourPosted';
 import YourSaved from '~/pages/YourSaved';
+import OnlyHeaderLayout from '~/components/Layout/OnlyHeaderLayout';
 
 
 const publicRoutes = [
@@ -23,10 +24,10 @@ const publicRoutes = [
   { path: routesConfig.apply, component: Apply, layout: DefaultLayout },
   { path: routesConfig.profile, component: Profile, layout: DefaultLayout },
   { path: routesConfig.setting, component: Setting, layout: DefaultLayout },
-  { path: routesConfig.register, component: Register, layout: DefaultLayout },
-  { path: routesConfig.login, component: Login, layout: DefaultLayout},
-  { path: routesConfig.resetpassword, component: ResetPassword, layout: DefaultLayout},
-  { path: routesConfig.sendemail, component: SendEmail, layout: DefaultLayout},
+  { path: routesConfig.register, component: Register, layout: OnlyHeaderLayout },
+  { path: routesConfig.login, component: Login, layout: OnlyHeaderLayout},
+  { path: routesConfig.resetpassword, component: ResetPassword, layout: OnlyHeaderLayout},
+  { path: routesConfig.sendemail, component: SendEmail, layout: OnlyHeaderLayout},
   { path: routesConfig.yourposted, component: YourPosted, layout: DefaultLayout},
   { path: routesConfig.yoursaved, component: YourSaved, layout: DefaultLayout}
 
