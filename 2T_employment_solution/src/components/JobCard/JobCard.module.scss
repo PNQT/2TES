@@ -273,8 +273,9 @@
     max-height: 80vh; 
     width: 700px;
     min-height: 400px;
-    // overflow-y: auto;
+    overflow-y: auto;
     gap: 1rem;
+    overflow-x: hidden;
 
     .content{
          gap: 2rem;
