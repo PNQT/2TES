@@ -31,6 +31,8 @@ function CategorySection() {
         const counts = {};
         for (const category of categories) {
           const response = await axios.get(`http://localhost:8000/api/count/${category.name}`);
+          console.log("Category:", category.name);
+          console.log("bbin",response.data);  
           counts[category.name] = response.data;
         }
         setJobCounts(counts);

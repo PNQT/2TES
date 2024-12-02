@@ -11,6 +11,7 @@ import { IoReturnDownBackOutline, IoBag, IoTime } from "react-icons/io5";
 import { MdEdit, MdDeleteForever } from "react-icons/md";
 import { RiMoneyDollarCircleFill } from "react-icons/ri";
 import { IoMdNotificationsOutline } from "react-icons/io";
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 
@@ -30,6 +31,10 @@ function JobCard({
   user,
   token,
   className,
+  hideFooter,
+  onCheckClick,
+  onDeleteClick,
+  onEditClick,
   days,
   ...props
 }) {
@@ -93,6 +98,7 @@ function JobCard({
   
 
   const handleSave = async () => {
+    setIsLoading(true);
     try {
       setIsSaved((prevState) => !prevState);
   
@@ -113,6 +119,7 @@ function JobCard({
     } catch (error) {
       console.error("Failed to toggle saved status:", error);
       setIsSaved((prevState) => !prevState);
+      setIsLoading(false);
     }
   };
   
@@ -157,44 +164,52 @@ function JobCard({
     setResume(null);
     dispatch({ type: "RESET" });
     setIsLoading(false);
-  }; // Đóng modal Apply
-
-  const handleApplySubmit = async () => {
-    setIsLoading(true);
-    try {
-      // Create FormData for file and other data
-      const formData = new FormData();
-      formData.append("job_id", details.job_id);
-      formData.append("applicant_id", user.user_id);
-      formData.append("cover_letter", cvFile);
-      formData.append("resume_path", resume);
-      formData.append("poster_id", details.employer_id);
-
-      // Send the FormData via POST request to the API
-      const response = await axios.post(
-        "http://localhost:8000/api/applications",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data", // Required for file uploads
-          },
+  }; 
+    const handleApplySubmit = async () => {
+      setIsLoading(true);
+      try {
+        // Tạo FormData cho file và dữ liệu khác
+        const formData = new FormData();
+        formData.append("job_id", details.job_id);
+        formData.append("applicant_id", user.user_id);
+        formData.append("cover_letter", cvFile);
+        formData.append("resume_path", resume);
+        formData.append("poster_id", details.employer_id);
+    
+        // Gửi FormData qua POST request đến API
+        const response = await axios.post(
+          "http://localhost:8000/api/applications",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+    
+        if (response.status === 200) {
+          // Thông báo thành công
+          toast.success("🎉 Your application has been submitted successfully!");
+          closeApplyModal();
+        } else {
+          // Thông báo lỗi
+          toast.error("❌ Unable to submit your application. Please try again later!");
+          console.error("Failed to submit application.");
         }
-      );
-
-      if (response.status === 200) {
-        alert("Application submitted successfully!");
-        closeApplyModal();
-      } else {
-        console.error("Failed to submit application.");
+      } catch (err) {
+        // Thông báo lỗi chi tiết
+        if (err.response && err.response.data) {
+          toast.error(`⚠️ Eroorr: ${err.response.data.message || "Không xác định"}`);
+        } else {
+          toast.error("⚠️ The application submission failed. Please check your network connection!");
+        }
+        console.error("Error applying for job:", err);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error("Error applying for job:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleFileChange = (e) => {
+    };
+    const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setCvFile(file); // Set CV file
@@ -260,6 +275,22 @@ function JobCard({
       </div>
 
       <div className={cx("footer")}>
+          {/* <>
+            <Button className={cx("buttonApply")} onClick={() => openApplyModal(details)}>
+              Apply
+            </Button>
+            <Button className={cx("buttonReadMore")} outline onClick={openModal}>
+              Read More
+            </Button>
+          </> */}
+           {hideFooter ? (
+          <>
+            <MdEdit className={cx("buttonEdit")} onClick={onEditClick} />
+            <MdDeleteForever className={cx("buttonDelete")} onClick={onDeleteClick} />
+            <IoMdNotificationsOutline  className={cx("buttonNotifi")} onClick={onCheckClick}/>
+
+          </>
+        ) : (
           <>
             <Button className={cx("buttonApply")} onClick={() => openApplyModal(details)}>
               Apply
@@ -268,6 +299,7 @@ function JobCard({
               Read More
             </Button>
           </>
+        )}
       </div>
 
       {/* Modal Hiển thị Chi Tiết Công Việc */}
@@ -352,7 +384,7 @@ function JobCard({
                   for the job.
                 </h5>
                 <h5>This file &lt; 9MB </h5>
-                <input type="file" onChange={handleFileChange} />
+                <input type="file" onChange={handleFileChange} required/>
                 <Button
                   className={cx("Button")}
                   onClick={() => dispatch({ type: "NEXT" })}
