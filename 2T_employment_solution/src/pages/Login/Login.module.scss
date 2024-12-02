@@ -84,6 +84,10 @@
           top: 44px;
 
           color: rgb(12, 37, 119);
+
+          &:hover{
+             cursor: pointer;
+          }
         }
       }
     }
@@ -123,4 +127,9 @@
   .link {
     color: #008194;
   }
+
+  
+}
+.password{
+   width: 100%;
 }

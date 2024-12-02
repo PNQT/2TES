@@ -76,8 +76,7 @@ function Setting() {
 
   const HandleDelete = async () => {
     try {
-      // Gửi yêu cầu xóa tài khoản đến API
-      const res = await axios.delete("http://localhost:8000/api/user/delete", {
+      const res = await axios.delete("http://localhost:8000/api/account/delete", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,  
         },
@@ -136,7 +135,7 @@ function Setting() {
       console.error("Lỗi khi thay đổi avatar:", error);
       alert("Có lỗi xảy ra. Vui lòng thử lại!");
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false); 
     }
   };
 
@@ -167,7 +166,7 @@ function Setting() {
       
       if (res.status === 200) {
         alert("Mật khẩu đã được thay đổi thành công!");
-        closePasswordModal(); // Close modal after success
+        closePasswordModal(); 
       }
     } catch (error) {
       if (error.response) {
@@ -176,7 +175,7 @@ function Setting() {
         setError("Có lỗi xảy ra. Vui lòng thử lại sau.");
       }
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false); 
     }
   };
 
@@ -213,26 +212,7 @@ function Setting() {
             Change Avatar
           </Button>
         </div>
-        {/* <div className={cx("profile-section")}>
-          <h2>Change Password</h2>
-          <Button className={cx("change-password-button")} onClick={openPasswordModal}>
-            Change Password
-          </Button>
-        </div>
-        <div className={cx("profile-section")}>
-          <Link to="/profile">
-            <Button className={cx("go-to-profile-button")}>Go to Profile</Button>
-          </Link>
-        </div>
-        <div className={cx("delete-section")} onClick={openDeleteModal}>
-          <Button className={cx("delete-account-button")}>Delete Account</Button>
-        </div>
-      </div>
-
-      <Link to="/logout" className={cx("logout-button")}>
-        <FaSignOutAlt className={cx("icon")} />
-        Logout
-      </Link> */}
+       
       <div className={cx("sectionRight")}>
           <div className={cx("password-section")}>
             <h2>Change Password:</h2>
@@ -329,16 +309,6 @@ function Setting() {
         </form>
       </Modal>
 
-      {/* Delete Account Modal */}
-      {/* <Modal isOpen={deleteModalIsOpen} onRequestClose={closeDeleteModal} className={cx("modal")}>
-        <h2>Are you sure you want to delete your account?</h2>
-        <div className={cx("groupButton")}>
-          <Button outline onClick={closeDeleteModal}>
-            Cancel
-          </Button>
-          <Button outline>Delete</Button>
-        </div>
-      </Modal> */}
       <Modal
         isOpen={deleteModalIsOpen}
         onRequestClose={closeDeleteModal}

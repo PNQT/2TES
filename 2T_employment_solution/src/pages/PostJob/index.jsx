@@ -6,6 +6,8 @@ import { AppContext } from "~/Context/AppContext";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import styles from "./PostJob.module.scss";
+import { toast } from 'react-toastify';
+
 
 const cx = classNames.bind(styles);
 
@@ -38,6 +40,8 @@ function PostJob() {
 
   const [isEmployer, setIsEmployer] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
 
   // Kiểm tra nếu người dùng là employer
   useEffect(() => {
@@ -68,33 +72,39 @@ function PostJob() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const currentDate = new Date().toISOString();
-    setFormData((prev) => ({ ...prev, created_at: currentDate }))
+    setFormData((prev) => ({ ...prev, created_at: currentDate }));
+  
     const data = new FormData();
-    console.log("Form data:", formData);
-    console.log("Image:", formData.expires_at);
-
-    // Append form fields
+    
     Object.keys(formData).forEach((key) => {
       if (formData[key] !== null) {
         data.append(key, formData[key]);
       }
     });
-
+    
     try {
+      setLoading(true); // Bắt đầu quá trình tải
       const response = await axios.post("http://localhost:8000/api/jobs", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+  
+      // Hiển thị thông báo thành công với toast
+      toast.success("Job posted successfully!");
       console.log("Job posted successfully:", response.data);
+      
     } catch (error) {
-      console.error(
-        "Error posting job:",
-        error.response ? error.response.data : error.message
-      );
+      // Hiển thị thông báo lỗi với toast
+      toast.error("Error posting job: " + (error.response ? error.response.data : error.message));
+      console.error("Error posting job:", error.response ? error.response.data : error.message);
+    } finally {
+      setLoading(false); // Kết thúc quá trình tải
     }
   };
+  
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 3));
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
@@ -230,6 +240,7 @@ function PostJob() {
     <div className={cx("form-container")}>
       <h2 className={cx("title")} data-aos="fade-up" data-aos-delay="200"> Posting Job</h2>
       {!isEmployer && <div className={cx("error-message")}>{errorMessage}</div>}
+  
       {isEmployer && (
         <>
           <div className={cx("progress-bar")} data-aos="fade-up" data-aos-delay="700">
@@ -248,9 +259,10 @@ function PostJob() {
               <span>Company Logo or Image</span>
             </div>
           </div>
-
+  
           <form onSubmit={handleSubmit} data-aos="fade-up" data-aos-delay="1200">
             {renderStep()}
+  
             <div className={cx("buttons")}>
               {currentStep > 1 && (
                 <Button onClick={prevStep} outline>
@@ -258,7 +270,18 @@ function PostJob() {
                 </Button>
               )}
               {currentStep < 3 && <Button onClick={nextStep}>Next</Button>}
-              {currentStep === 3 && <Button type="submit">Submit</Button>}
+              {currentStep === 3 && (
+                <>
+                  {loading ? (
+                    <div className={cx("loading-spinner")}>
+                      <div className={cx("spinner")}></div> {/* Spinner loading */}
+                      <span>Submitting...</span>
+                    </div>
+                  ) : (
+                    <Button type="submit">Submit</Button>
+                  )}
+                </>
+              )}
             </div>
           </form>
         </>

@@ -82,7 +82,7 @@ function YourSaved() {
                 job_id={job.job_id}
                 user={user}
                 token={token}
-                hideFooter
+                // hideFooter
                 className={cx("job")}
               />
             </div>
