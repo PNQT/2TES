@@ -18,7 +18,7 @@ function Notification() {
   const [emails, setEmails] = useState({});
   const [names, setNames] = useState({});
   const [selectedNotification, setSelectedNotification] = useState(null);
-  const { user_id } = useContext(AppContext);
+  const { user_id , token} = useContext(AppContext);
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!user_id) return;
@@ -97,6 +97,8 @@ function Notification() {
   const handleClick = () => setVisible(!visible);
 
   const visibleNotifications = notifi.slice(0, 10); // Show max 10 notifications
+  
+  if(!token) return null;
 
   return (
     <div className={cx("notification-container")}>
