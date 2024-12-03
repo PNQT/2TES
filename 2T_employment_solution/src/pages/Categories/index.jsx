@@ -27,6 +27,7 @@ function Categories() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const { user, token } = useContext(AppContext);
+  const [savedJobIds, setSavedJobIds] = useState([]);
   const API_URL = "http://localhost:8000/api";
   const navigate = useNavigate();
 
@@ -60,24 +61,44 @@ function Categories() {
     navigate("/login");
   }
 
-  // Fetch job listings
+  // Fetch saved jobs and job listings together
   useEffect(() => {
-    const fetchJobs = async () => {
+    const fetchJobsAndSavedJobs = async () => {
+      if (!user?.user_id) return;
+
       try {
-        const response = await axios.get(`${API_URL}/joball`);
-        setJobs(response.data);
+        // Fetch saved jobs
+        const savedJobResponse = await axios.get(`${API_URL}/saved_job/check`, {
+          params: { user_id: user.user_id },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const savedJobIds = savedJobResponse.data.savedJobIds || [];
+
+        setSavedJobIds(savedJobIds); // Set saved job IDs state
+
+        // Fetch job listings
+        const jobsResponse = await axios.get(`${API_URL}/joball`);
+        setJobs(jobsResponse.data);
+
+        // Update the job listings with saved status
+        const updatedJobs = jobsResponse.data.map((job) => ({
+          ...job,
+          status: savedJobIds.includes(job.job_id),
+        }));
+
+        setJobs(updatedJobs); // Update job listings with saved status
       } catch (error) {
-        console.error("Error fetching jobs:", error);
+        console.error("Error fetching jobs or saved jobs:", error);
         setErrorMessage("Could not fetch jobs.");
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // End loading state
       }
     };
 
     if (user) {
-      fetchJobs();
+      fetchJobsAndSavedJobs(); // Fetch both jobs and saved jobs when user exists
     }
-  }, [user]);
+  }, [user, token]);
 
   // Handle search
   const fetchSearchResults = debounce(async (query) => {
@@ -99,7 +120,6 @@ function Categories() {
     }
     fetchSearchResults(searchValue);
   }, [searchValue]);
-
 
   const getAnimationClass = (index) => {
     const mod = index % 4;
@@ -126,6 +146,7 @@ function Categories() {
           decription={job.description}
           details={job}
           user={user}
+          status={job.status} 
           job_id={job.job_id}
           token={token}
           className={cx("job")}
@@ -133,7 +154,7 @@ function Categories() {
         />
       </div>
     ));
-  
+
   return (
     <div className={cx("container")}>
       <div className={cx("searchResults")}>
@@ -145,9 +166,7 @@ function Categories() {
             <ClipLoader className={cx("spinner")} />
           ) : searchResult.length > 0 ? (
             <div className={cx("wrapper")}>
-               <div className={cx("jobs")}>
-                {renderJobCards(searchResult)}
-                </div>
+              <div className={cx("jobs")}>{renderJobCards(searchResult)}</div>
             </div>
           ) : (
             <div className={cx("wrapper")}>
@@ -157,7 +176,7 @@ function Categories() {
                   <p>{errorMessage}</p>
                 ) : jobs.length === 0 ? (
                   <p>No jobs available</p>
-                ) : (                 
+                ) : (
                   renderJobCards(jobs)
                 )}
               </div>
