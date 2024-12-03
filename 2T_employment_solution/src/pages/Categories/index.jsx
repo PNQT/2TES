@@ -155,10 +155,10 @@ function Categories() {
               <div className={cx("jobs")}>
                 {errorMessage ? (
                   <p>{errorMessage}</p>
-                ) : jobs.length > 0 ? (
-                  renderJobCards(jobs)
-                ) : (
+                ) : jobs.length === 0 ? (
                   <p>No jobs available</p>
+                ) : (                 
+                  renderJobCards(jobs)
                 )}
               </div>
             </div>
