@@ -6,7 +6,8 @@ import { AppContext } from "~/Context/AppContext";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import styles from "./PostJob.module.scss";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+import { ClipLoader } from "react-spinners";
 
 
 const cx = classNames.bind(styles);
@@ -53,7 +54,6 @@ function PostJob() {
     }
   }, [user]);
 
-  // Cập nhật employer_id khi user thay đổi
   useEffect(() => {
     if (user && user.user_type === "employer") {
       setFormData((prev) => ({ ...prev, employer_id: user.user_id }));
@@ -72,38 +72,59 @@ function PostJob() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     const currentDate = new Date().toISOString();
     setFormData((prev) => ({ ...prev, created_at: currentDate }));
   
     const data = new FormData();
-    
+  
     Object.keys(formData).forEach((key) => {
       if (formData[key] !== null) {
         data.append(key, formData[key]);
       }
     });
-    
+    if (currentStep === 3) {
+  
     try {
-      setLoading(true); // Bắt đầu quá trình tải
+      setLoading(true); 
       const response = await axios.post("http://localhost:8000/api/jobs", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
   
-      // Hiển thị thông báo thành công với toast
-      toast.success("Job posted successfully!");
-      console.log("Job posted successfully:", response.data);
-      
+      if (response.status === 200) {
+        toast.success("Job posted successfully!");
+        console.log("Job posted successfully:", response.data);
+        setCurrentStep(1);
+        
+        setFormData({
+          employer_id:  user.user_id,
+          title: "",
+          description: "",
+          created_at: "",
+          expires_at: "",
+          requirements: "",
+          company_name: "",
+          location: "",
+          job_type: "full_time",
+          salary: "",
+          contact_email: "",
+          contact_phone: "",
+          avatar: null,
+
+          // Thêm các trường khác ở đây
+        });
+      }
     } catch (error) {
-      // Hiển thị thông báo lỗi với toast
       toast.error("Error posting job: " + (error.response ? error.response.data : error.message));
       console.error("Error posting job:", error.response ? error.response.data : error.message);
     } finally {
       setLoading(false); // Kết thúc quá trình tải
     }
+  }
   };
+  
   
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 3));
@@ -260,7 +281,15 @@ function PostJob() {
             </div>
           </div>
   
-          <form onSubmit={handleSubmit} data-aos="fade-up" data-aos-delay="1200">
+          <form 
+            onSubmit={handleSubmit} 
+            data-aos="fade-up" 
+            data-aos-delay="1200" 
+            onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault(); // Ngăn chặn hành vi gửi form khi nhấn Enter
+            }
+          }}>
             {renderStep()}
   
             <div className={cx("buttons")}>
@@ -275,7 +304,7 @@ function PostJob() {
                   {loading ? (
                     <div className={cx("loading-spinner")}>
                       <div className={cx("spinner")}></div> {/* Spinner loading */}
-                      <span>Submitting...</span>
+                      <ClipLoader/>
                     </div>
                   ) : (
                     <Button type="submit">Submit</Button>
