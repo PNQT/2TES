@@ -123,7 +123,7 @@ function Categories() {
           shortdecr1={job.job_type}
           shortdecr2={job.salary}
           shortdecr3={job.expires_at}
-          description={job.description}
+          decription={job.description}
           details={job}
           user={user}
           job_id={job.job_id}

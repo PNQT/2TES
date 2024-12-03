@@ -6,17 +6,18 @@ import icons from "~/assets/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
 const cx = classNames.bind(styles);
 
 const categories = [
-  { name: "Real Estate Jobs", icon: icons.estate },
-  { name: "Hospital jobs", icon: icons.hospital },
-  { name: "Construction Jobs", icon: icons.constructor },
-  { name: "Accounting Jobs", icon: icons.accounting },
-  { name: "Design & Creative Jobs", icon: icons.design },
-  { name: "Fashion Jobs", icon: icons.fashion },
-  { name: "IT & Telecom Jobs", icon: icons.it },
-  { name: "Shipping Jobs", icon: icons.shipper },
+  { name: "Real Estate Jobs", icon: icons.estate,search: 'Estate' },
+  { name: "Hospital jobs", icon: icons.hospital, search: 'Hospital' },
+  { name: "Construction Jobs", icon: icons.constructor, search: 'Construction' },
+  { name: "Accounting Jobs", icon: icons.accounting , search: 'Accounting'},
+  { name: "Design & Creative Jobs", icon: icons.design , search: 'Design'},
+  { name: "Fashion Jobs", icon: icons.fashion , search: 'Fashion'},
+  { name: "IT & Telecom Jobs", icon: icons.it , search: 'IT'},
+  { name: "Shipping Jobs", icon: icons.shipper ,search: 'Shipping'},
 ];
  
 function CategorySection() {
@@ -30,7 +31,7 @@ function CategorySection() {
       try {
         const counts = {};
         for (const category of categories) {
-          const response = await axios.get(`http://localhost:8000/api/count/${category.name}`);
+          const response = await axios.get(`http://localhost:8000/api/count/${category.search}`);
           console.log("Category:", category.name);
           console.log("bbin",response.data);  
           counts[category.name] = response.data;
