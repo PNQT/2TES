@@ -24,7 +24,7 @@ function Profile() {
 
   useEffect(() => {
     if (!token) {
-      alert("Bạn cần đăng nhập để truy cập trang này!");
+      alert("You need to log in to access this page!");
       navigate("/login");
     }
   }, [token]);
@@ -55,7 +55,7 @@ function Profile() {
       };
       reader.readAsDataURL(file);
     } else {
-      alert("Vui lòng chọn một tệp ảnh!");
+      alert("Please select an image file!");
     }
   };
 
@@ -81,13 +81,13 @@ function Profile() {
         const data = response.data;
         setUser((prevUser) => ({ ...prevUser, avatar: data.avatar_url }));
         avatarCloseModal();
-        alert("Avatar đã được thay đổi thành công!");
+        alert("The avatar has been successfully changed!");
       } else {
-        alert("Thay đổi avatar thất bại!");
+        alert("Avatar change failed!");
       }
     } catch (error) {
       console.error("Lỗi khi thay đổi avatar:", error);
-      alert("Có lỗi xảy ra. Vui lòng thử lại!");
+      alert("An error occurred. Please try again");
     } finally {
       setIsLoading(false); // End loading
     }
@@ -121,11 +121,11 @@ function Profile() {
         }));
         closeModal();
       } else {
-        alert("Thay đổi thông tin thất bại!");
+        alert("Information update failed");
       }
     } catch (error) {
       console.error("Lỗi khi thay đổi thông tin:", error);
-      alert("Có lỗi xảy ra. Vui lòng thử lại!");
+      alert("An error occurred. Please try again");
     } finally {
       setIsLoading(false); // End loading
     }

@@ -6,6 +6,7 @@ import Button from "~/components/Button";
 import styles from "./Search.module.scss";
 import { MdOutlineClear } from "react-icons/md";
 
+
 const cx = classNames.bind(styles);
 
 function Search(...props) {
@@ -32,6 +33,11 @@ function Search(...props) {
         setSearchValue('');
         inputRef.current.focus();
     };
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSubmit(e);
+        }
+    };
 
     return (     
         <div className={cx("container")} {...props}>
@@ -43,6 +49,7 @@ function Search(...props) {
                     placeholder="Search for Jobs"
                     value={searchValue}
                     onChange={handleChange}
+                    onKeyPress={handleKeyPress}
                 />
                 {searchValue && (
                     <MdOutlineClear 

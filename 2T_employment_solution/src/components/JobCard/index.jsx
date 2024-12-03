@@ -233,10 +233,12 @@ function JobCard({
       
       <div className={cx("dateAgo")}>{days}</div>
       {/* Icon Save with onClick handler */}
+      
       <div className={cx("saveIcon")} onClick={handleSave}>
         <img
           src={isSaved ? icons.saved : icons.save} 
           className={cx("save")}
+          
         />
       </div>
 

@@ -16,7 +16,7 @@ const Register = () => {
     password: '',
     password_confirmation: '',
     phone: '',
-    user_type: '',
+    user_type: 'candidate',
     address: '',
   
   });
@@ -44,14 +44,24 @@ const Register = () => {
   // Hàm kiểm tra tính hợp lệ của form trước khi gửi
   const validateForm = () => {
     const validationErrors = [];
-    if (!formData.user_name) validationErrors.push('Tên là bắt buộc');
-    if (!formData.email) validationErrors.push('Email là bắt buộc');
-    if (!formData.password) validationErrors.push('Mật khẩu là bắt buộc');
-    if (formData.password !== formData.password_confirmation)
-      validationErrors.push('Mật khẩu không khớp');
-    if (!formData.phone) validationErrors.push('Số điện thoại là bắt buộc');
-    if (!formData.user_type) validationErrors.push('Loại người dùng là bắt buộc');
-    if (!formData.address) validationErrors.push('Địa chỉ là bắt buộc');
+    if (!formData.email) validationErrors.push('Email is required.');
+    if (!formData.password) {
+      validationErrors.push('Password is required.');
+    } else {
+      const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{9,}$/;
+      if (!passwordRegex.test(formData.password)) {
+        validationErrors.push(
+          'Password must be at least 8 characters long and include at least one special character.'
+        );
+      }
+    }
+    if (formData.password !== formData.password_confirmation) {
+      validationErrors.push('Passwords do not match.');
+    }
+    if (!formData.phone) validationErrors.push('Phone number is required.');
+    if (!formData.user_type) validationErrors.push('User type is required.');
+    if (!formData.address) validationErrors.push('Address is required.');
+
     return validationErrors;
   };
 
@@ -70,7 +80,7 @@ const Register = () => {
       const response = await axios.post('http://localhost:8000/api/register', formData);
       console.log('Account created successfully', response.data);
 
-      setSuccessMessage('Tạo tài khoản thành công!');
+      setSuccessMessage('Account created successfully');
       
       setFormData({
         user_name: '',
@@ -78,7 +88,7 @@ const Register = () => {
         password: '',
         password_confirmation: '',
         phone: '',
-        user_type: '',
+        user_type: 'candidate',
         address: '',
        
       });
@@ -86,12 +96,12 @@ const Register = () => {
 
      
       if (
-        window.confirm('Tạo tài khoản thành công! Bạn có muốn chuyển đến trang đăng nhập không?')
+        window.confirm('Account created successfully! Do you want to login now?')
       ) {
         navigate('/login');
       }
     } catch (error) {
-      console.error('Đã xảy ra lỗi!', error);
+      console.error('OPP!', error);
       if (error.response && error.response.data) {
         const serverErrors = error.response.data.errors;
         if (serverErrors) {
@@ -100,10 +110,10 @@ const Register = () => {
           setErrors(errorMessages);
         } else {
           // Nếu không có lỗi chi tiết, hiển thị lỗi mặc định
-          setErrors(['Đã có lỗi xảy ra, vui lòng thử lại!']);
+          setErrors(['An error has occurred, please try again!']);
         }
       } else {
-        setErrors(['Đã có lỗi xảy ra, vui lòng thử lại!']);
+        setErrors(['An error has occurred, please try again!']);
       }
     }
   };
