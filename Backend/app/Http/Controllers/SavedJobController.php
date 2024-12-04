@@ -13,13 +13,20 @@ class SavedJobController extends Controller
 {
     public function check(Request $request)
     {
-        $jobId = $request->query('job_id');
         $userId = $request->query('user_id');
 
-        $isSaved = SavedJob::where('job_id', $jobId)->where('user_id', $userId)->exists();
-
-        return response()->json(['isSaved' => $isSaved]);
+    // Nếu không có user_id, trả về phản hồi trống với mã 204
+    if (!$userId) {
+        return response()->noContent();
     }
+
+    // Lấy danh sách các job_id mà user đã lưu
+    $savedJobs = SavedJob::where('user_id', $userId)
+        ->pluck('job_id')
+        ->toArray();
+
+    return response()->json(['savedJobIds' => $savedJobs]);
+}
 
     // Lưu công việc
     public function store(Request $request)
@@ -53,6 +60,7 @@ class SavedJobController extends Controller
         return response()->json(['message' => 'Job unsaved successfully!']);
     }
 
+    
     public function getSavedJobs(Request $request)
     {
         $userId = $request->user()->user_id; // Lấy user_id từ token đã xác thực
@@ -66,4 +74,24 @@ class SavedJobController extends Controller
 
         return response()->json($savedJob, 200);
     }
+    
+    public function getSavedJobIds(Request $request, $id)
+{
+    // $userId = $request->input('user_id'); 
+
+    // Kiểm tra nếu không có user_id
+    if (!$id) {
+        return response()->json([
+            'message' => 'User ID is required.',
+        ], 400);
+    }
+
+    $savedJobIds = DB::table('saved_jobs')
+        ->where('user_id', $id)
+        ->pluck('job_id'); 
+
+    return response()->json([
+        'job_ids' => $savedJobIds,
+    ], 200);
+}
 }

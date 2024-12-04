@@ -17,6 +17,27 @@ function YourSaved() {
     const [errorMessage, setErrorMessage] = useState(''); // Error message for unauthorized users
     const API_URL = 'http://localhost:8000/api';
     const [loading, setLoading] = useState(true);
+    const [savedJobIds, setSavedJobIds] = useState([]);
+
+    useEffect(() => {
+      const fetchSavedJobs = async () => {
+        if (!user?.user_id) return;
+        try {
+          const response = await axios.get(`${API_URL}/saved_job/check`, {
+            params: { user_id: user.user_id },
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          console.log("API Response:", response.data); // Kiểm tra dữ liệu trả về
+  
+          setSavedJobIds(response.data.savedJobIds || []);
+        } catch (error) {
+          console.error("Error fetching saved jobs:", error);
+        }
+      };
+      if (user) {
+        fetchSavedJobs();
+      }
+    }, [user, token]);
 
     useEffect(()=>{
         AOS.init();
@@ -79,6 +100,7 @@ function YourSaved() {
                 shortdecr3={job.created_at}
                 decription={job.description}
                 details={job}
+                status={savedJobIds && savedJobIds.includes(job.job_id)}
                 job_id={job.job_id}
                 user={user}
                 token={token}

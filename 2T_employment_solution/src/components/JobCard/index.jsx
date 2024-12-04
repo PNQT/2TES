@@ -27,6 +27,7 @@ function JobCard({
   shortdecr2,
   shortdecr3,
   decription,
+  status,
   details,
   user,
   token,
@@ -72,31 +73,38 @@ function JobCard({
 
   const API_URL = "http://localhost:8000/api";
 
+  // useEffect(() => {
+  //   const checkSavedStatus = async () => {
+  //     try {
+  //       const response = await axios.get(`${API_URL}/saved_job/check`, {
+  //         params: {
+  //           job_id: details.job_id,
+  //           user_id: user.user_id,
+  //         },
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+
+  //       setIsSaved(response.data.isSaved);
+  //     } catch (error) {
+  //       console.error("Failed to check saved status:", error);
+  //     } finally {
+  //       setIsLoading(false); // Set loading to false after fetching
+  //     }
+  //   };
+
+
+  //   checkSavedStatus();
+  // }, [details.job_id, user.user_id, token]);
+ 
   useEffect(() => {
-    const checkSavedStatus = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/saved_job/check`, {
-          params: {
-            job_id: details.job_id,
-            user_id: user.user_id,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setIsSaved(response.data.isSaved);
-      } catch (error) {
-        console.error("Failed to check saved status:", error);
-      } finally {
-        setIsLoading(false); // Set loading to false after fetching
-      }
-    };
-
-    checkSavedStatus();
-  }, [details.job_id, user.user_id, token]);
-  
-
+  if(status === true){
+    setIsSaved(true);
+  }else{
+    setIsSaved(false);
+  }
+  }, [status]);
   const handleSave = async () => {
     setIsLoading(true);
     try {
@@ -236,7 +244,8 @@ function JobCard({
       
       <div className={cx("saveIcon")} onClick={handleSave}>
         <img
-          src={isSaved ? icons.saved : icons.save} 
+        
+          src={isSaved? icons.saved : icons.save} 
           className={cx("save")}
           
         />

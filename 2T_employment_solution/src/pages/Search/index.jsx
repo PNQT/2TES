@@ -12,6 +12,7 @@ import { useContext } from "react";
 
 import ClipLoader from "react-spinners/ClipLoader";
 import { debounce } from "lodash";
+import axios from "axios";
 
 const cx = classNames.bind(styles);
 Modal.setAppElement("#root");
@@ -25,28 +26,33 @@ function SearchResults() {
   const [searchResult, setSearchResult] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { user, token ,isLoading1 ,user_id} = useContext(AppContext);
+  const [savedJobIds, setSavedJobIds] = useState([]);
+  const API_URL = "http://localhost:8000/api";
   const query = useQuery();
   const searchValue = query.get("query");
 
-   
   // Debounced Fetch for Search Results
   const fetchSearchResults = debounce(async (query) => {
     setIsLoading(true);
     try {
       const results = await searchServices.search(query);
       setSearchResult(results);
-    } catch (error) {
+    } catch (error) { 
       console.error("Error fetching search results:", error);
     } finally {
       setIsLoading(false);
     }
-  }, 500); // Debounce 500ms
+  }, 500); 
 
+  
   useEffect(() => {
     if (!searchValue) {
       setSearchResult([]);
       return;
     }
+   
+    fetchSavedJobs();
+      console.log("fetching search results for query:", query);
     fetchSearchResults(searchValue);
   }, [searchValue]);
 
@@ -59,7 +65,19 @@ function SearchResults() {
   if(!token){
     return <p>login</p>;
   }
+  const fetchSavedJobs = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/saved_job/check`, {
+        params: { user_id: user.user_id },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("API Response:", response.data); // Kiểm tra dữ liệu trả về
 
+      setSavedJobIds(response.data.savedJobIds || []);
+    } catch (error) {
+      console.error("Error fetching saved jobs:", error);
+    }
+  };
  
   return (
     <div className={cx("searchResults")}>
@@ -82,9 +100,10 @@ function SearchResults() {
                 shortdecr3={job.created_at}
                 decription={job.description}
                 details={job}
-                user={user}
+                status={savedJobIds && savedJobIds.includes(job.job_id)}
                 job_id={job.job_id}
-                token={token}
+                user={user}
+                token={token}              
               />
             </div>
           ))

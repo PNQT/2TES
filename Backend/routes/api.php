@@ -38,6 +38,7 @@ Route::post('/jobs/YourPosted', [PostJobController::class, 'getUserPostedJobs'])
 
 
 Route::get('/saved_job/check', [SavedJobController::class, 'check']);
+Route::get('/saved_job/{id}', [SavedJobController::class, 'getSavedJobIds']);
 Route::post('/saved_job', [SavedJobController::class, 'store']);
 Route::delete('/saved_job', [SavedJobController::class, 'destroy']);
 Route::middleware('auth:sanctum')->post('/jobs/YourSaved', [SavedJobController::class, 'getSavedJobs']);
