@@ -31,26 +31,6 @@ function SearchResults() {
   const query = useQuery();
   const searchValue = query.get("query");
 
-  useEffect(() => {
-    const fetchSavedJobs = async () => {
-      if (!user?.user_id) return;
-      try {
-        const response = await axios.get(`${API_URL}/saved_job/check`, {
-          params: { user_id: user.user_id },
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("API Response:", response.data); // Kiểm tra dữ liệu trả về
-
-        setSavedJobIds(response.data.savedJobIds || []);
-      } catch (error) {
-        console.error("Error fetching saved jobs:", error);
-      }
-    };
-    if (user) {
-      fetchSavedJobs();
-    }
-  }, [user, token]);
-   
   // Debounced Fetch for Search Results
   const fetchSearchResults = debounce(async (query) => {
     setIsLoading(true);
@@ -62,15 +42,17 @@ function SearchResults() {
     } finally {
       setIsLoading(false);
     }
-  }, 500); // Debounce 500ms
+  }, 500); 
 
- 
   
   useEffect(() => {
     if (!searchValue) {
       setSearchResult([]);
       return;
     }
+   
+    fetchSavedJobs();
+      console.log("fetching search results for query:", query);
     fetchSearchResults(searchValue);
   }, [searchValue]);
 
@@ -83,7 +65,19 @@ function SearchResults() {
   if(!token){
     return <p>login</p>;
   }
+  const fetchSavedJobs = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/saved_job/check`, {
+        params: { user_id: user.user_id },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("API Response:", response.data); // Kiểm tra dữ liệu trả về
 
+      setSavedJobIds(response.data.savedJobIds || []);
+    } catch (error) {
+      console.error("Error fetching saved jobs:", error);
+    }
+  };
  
   return (
     <div className={cx("searchResults")}>
